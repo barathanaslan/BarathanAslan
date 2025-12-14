@@ -13,13 +13,38 @@
 
 <body>
     <div class="screen-layout">
-        <div class="window main-window">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon">
+                <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png" alt="My Computer">
+                <span>My Computer</span>
+            </div>
+            <div class="desktop-icon">
+                <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_full-4.png" alt="Recycle Bin">
+                <span>Recycle Bin</span>
+            </div>
+            <div class="desktop-icon">
+                <img src="https://win98icons.alexmeub.com/icons/png/directory_closed-4.png" alt="My Documents">
+                <span>My Documents</span>
+            </div>
+            <div class="desktop-icon">
+                <img src="https://win98icons.alexmeub.com/icons/png/msie1-4.png" alt="Internet Explorer">
+                <span>Internet Explorer</span>
+            </div>
+            <div class="desktop-icon">
+                <img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png" alt="Notepad">
+                <span>Notepad</span>
+            </div>
+        </div>
+
+        <!-- Main Window (CV) -->
+        <div class="window main-window" id="cv-window">
             <div class="title-bar">
                 <div class="title-bar-text">CV - Barathan Aslan.doc</div>
                 <div class="title-bar-controls">
                     <button aria-label="Minimize"></button>
                     <button aria-label="Maximize"></button>
-                    <button aria-label="Close"></button>
+                    <button aria-label="Close" onclick="closeWindow()"></button>
                 </div>
             </div>
             <div class="window-body">
@@ -240,7 +265,53 @@
                 </div> <!-- End cv-content -->
             </div>
         </div>
+
+        <!-- Taskbar -->
+        <div class="taskbar">
+            <button class="start-button">
+                <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
+                <b>Start</b>
+            </button>
+            <div class="taskbar-divider"></div>
+            <div class="task-button active" onclick="toggleWindow()" id="taskbar-cv">
+                <img src="https://win98icons.alexmeub.com/icons/png/wordpad-0.png" alt="CV">
+                CV - Baratha...
+            </div>
+            <div class="taskbar-time">04:20 PM</div>
+        </div>
     </div>
+
+    <script>
+        function closeWindow() {
+            document.getElementById('cv-window').style.display = 'none';
+            document.getElementById('taskbar-cv').classList.remove('active');
+        }
+
+        function toggleWindow() {
+            const win = document.getElementById('cv-window');
+            const btn = document.getElementById('taskbar-cv');
+            if (win.style.display === 'none') {
+                win.style.display = 'block';
+                btn.classList.add('active');
+            } else {
+                win.style.display = 'none';
+                btn.classList.remove('active');
+            }
+        }
+
+        // Simple clock
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            document.querySelector('.taskbar-time').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+    </script>
 </body>
 
 </html>
