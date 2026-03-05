@@ -1,9 +1,3 @@
-# BarathanAslanCV
+Hello world!
 
-## About
-
-## Setup
-
-## Usage
-
-## License
+https://barathanaslan.github.io/BarathanAslan/
