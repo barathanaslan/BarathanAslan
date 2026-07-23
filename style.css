@@ -229,6 +229,11 @@ body {
     text-decoration: underline;
 }
 
+.cv-content .job-subtitle {
+    font-style: italic;
+    color: #555;
+}
+
 /* My Computer / Folder Window */
 .folder-window {
     width: 550px;
@@ -559,6 +564,13 @@ body {
     .job-details {
         margin-top: 3px;
         /* Reduced from 10px */
+    }
+
+    .job-subtitle {
+        font-size: 11px;
+        font-style: italic;
+        color: #555;
+        margin-bottom: 2px;
     }
 
     .job-details ul {
