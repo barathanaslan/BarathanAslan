@@ -22,6 +22,33 @@ No build step, no dependencies fetched at runtime — every asset is same-origin
 The webfonts must stay next to `assets/98.css`: its `@font-face` rules reference
 them by bare relative filename.
 
+### Small screens and touch
+
+The desktop layout is unchanged; small-screen support is a layer on top of it.
+
+- Breakpoint **700px**, declared twice — `@media screen and (max-width: 700px)`
+  at the end of `style.css` and `matchMedia('(max-width: 700px)')` in `app.js`.
+  **Keep the two in sync.** Below it the three windows fill the viewport minus
+  the taskbar, and `app.js` stops writing inline pixel geometry (which would
+  otherwise beat the stylesheet) — see `fitWindowToScreen()`.
+- Icons open on double-click on a pointer device and on a single tap on touch.
+  `app.js` wires every element carrying an `ondblclick` attribute, reading the
+  handler back off the element as `el.ondblclick`, so adding an icon in
+  `index.html` needs no JS change. The same pass adds Enter/Space activation;
+  the icons carry `tabindex="0" role="button"` in the markup.
+- `makeDraggable()` has a touch path beside the mouse one. It calls
+  `preventDefault` on `touchmove`, and `.title-bar` sets `touch-action: none`.
+- `clampIntoView()` pulls a window back on-screen when its stylesheet position
+  hangs off the edge (the mail window on a tablet). It measures against
+  `documentElement.clientWidth`, **not** `innerWidth`: on a touch device the
+  layout viewport grows to cover overflowing content, so `innerWidth` would
+  report every window as fitting.
+
+Pre-existing quirks deliberately left alone, because fixing either would move
+desktop pixels: the UA's 8px `body` margin plus `.screen-layout { width: 100vw }`
+makes the page 8px wider than the viewport above 700px, and there is no
+`favicon.ico`, so every load logs one 404.
+
 ### Editing the CV
 
 Change `cv.json`. Rich text is expressed as arrays of inline nodes — a plain

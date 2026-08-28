@@ -14,6 +14,51 @@ const mailTitleBar = document.getElementById('mail-title-bar');
 const clippyPopup = document.getElementById('clippy-popup');
 let clippyTimeout;
 
+// ---------------------------------------------------------------------------
+// Small-screen support. Below this width the stylesheet makes every window fill
+// the usable viewport, so the JS must stop writing fixed pixel geometry and let
+// those rules win. Keep the breakpoint in sync with style.css.
+// ---------------------------------------------------------------------------
+const TASKBAR_HEIGHT = 28;
+const smallScreen = window.matchMedia('(max-width: 700px)');
+
+function isSmallScreen() {
+    return smallScreen.matches;
+}
+
+// Drop the inline geometry so the small-screen stylesheet rules apply.
+function fitWindowToScreen(win) {
+    win.style.width = '';
+    win.style.height = '';
+    win.style.left = '';
+    win.style.top = '';
+}
+
+// Nudge a window back on-screen if its stylesheet position puts it partly
+// outside the viewport — as the mail window does on a tablet. A no-op whenever
+// the window already fits, so desktop layout at the usual sizes is untouched.
+//
+// The maths runs in viewport coordinates and the correction is applied back in
+// the offset parent's coordinates. `innerWidth` is deliberately not used: on a
+// touch device the layout viewport grows to cover overflowing content, so it
+// would report the window as fitting no matter how far off-screen it sat.
+function clampIntoView(win) {
+    if (isSmallScreen()) return;
+    const rect = win.getBoundingClientRect();
+    const maxRight = document.documentElement.clientWidth;
+    const maxBottom = document.documentElement.clientHeight - TASKBAR_HEIGHT;
+
+    const wantLeft = Math.max(0, Math.min(rect.left, maxRight - rect.width));
+    const wantTop = Math.max(0, Math.min(rect.top, maxBottom - rect.height));
+
+    if (Math.round(wantLeft) !== Math.round(rect.left)) {
+        win.style.left = `${win.offsetLeft + (wantLeft - rect.left)}px`;
+    }
+    if (Math.round(wantTop) !== Math.round(rect.top)) {
+        win.style.top = `${win.offsetTop + (wantTop - rect.top)}px`;
+    }
+}
+
 function showClippy() {
     // Clear any existing timeout
     if (clippyTimeout) clearTimeout(clippyTimeout);
@@ -45,6 +90,14 @@ function openCV() {
 }
 
 function centerWindow() {
+    if (isSmallScreen()) {
+        // Fills the viewport via style.css; nothing to centre.
+        fitWindowToScreen(cvWindow);
+        cvWindow.style.transform = 'none';
+        cvWindow.style.margin = '0';
+        return;
+    }
+
     const rect = cvWindow.getBoundingClientRect();
     const winWidth = window.innerWidth;
     const winHeight = window.innerHeight;
@@ -61,6 +114,7 @@ function centerWindow() {
     cvWindow.style.top = `${top}px`;
     cvWindow.style.transform = 'none'; // Ensure no CSS transform
     cvWindow.style.margin = '0'; // Ensure no margin auto
+    clampIntoView(cvWindow);
 }
 
 function closeWindow() {
@@ -77,6 +131,12 @@ function minimizeWindow() {
 function maximizeWindow() {
     // Simplified maximize logic
     if (cvWindow.dataset.state === 'maximized') {
+        if (isSmallScreen()) {
+            // The stylesheet already fills the viewport; restore to that.
+            fitWindowToScreen(cvWindow);
+            cvWindow.dataset.state = 'normal';
+            return;
+        }
         // Restore
         cvWindow.style.width = cvWindow.dataset.prevWidth || '900px';
         cvWindow.style.height = cvWindow.dataset.prevHeight || '';
@@ -160,6 +220,7 @@ function openMyComputer() {
     mcTaskbarBtn.style.display = 'flex';
     mcTaskbarBtn.classList.add('active');
     bringToFront(mcWindow);
+    clampIntoView(mcWindow);
 }
 
 function closeMyComputer() {
@@ -175,6 +236,11 @@ function minimizeMyComputer() {
 
 function maximizeMyComputer() {
     if (mcWindow.dataset.state === 'maximized') {
+        if (isSmallScreen()) {
+            fitWindowToScreen(mcWindow);
+            mcWindow.dataset.state = 'normal';
+            return;
+        }
         mcWindow.style.width = mcWindow.dataset.prevWidth || '550px';
         mcWindow.style.height = mcWindow.dataset.prevHeight || '350px';
         mcWindow.style.top = mcWindow.dataset.prevTop || '100px';
@@ -210,6 +276,7 @@ function openMail() {
     mailTaskbarBtn.style.display = 'flex';
     mailTaskbarBtn.classList.add('active');
     bringToFront(mailWindow);
+    clampIntoView(mailWindow);
 }
 
 function closeMail() {
@@ -225,6 +292,11 @@ function minimizeMail() {
 
 function maximizeMail() {
     if (mailWindow.dataset.state === 'maximized') {
+        if (isSmallScreen()) {
+            fitWindowToScreen(mailWindow);
+            mailWindow.dataset.state = 'normal';
+            return;
+        }
         mailWindow.style.width = mailWindow.dataset.prevWidth || '500px';
         mailWindow.style.height = mailWindow.dataset.prevHeight || '400px';
         mailWindow.style.top = mailWindow.dataset.prevTop || '80px';
@@ -266,19 +338,32 @@ cvWindow.addEventListener('mousedown', () => bringToFront(cvWindow));
 mcWindow.addEventListener('mousedown', () => bringToFront(mcWindow));
 mailWindow.addEventListener('mousedown', () => bringToFront(mailWindow));
 
-// Generic drag setup
+// Same, for touch — a drag prevents the synthesised mousedown from firing.
+cvWindow.addEventListener('touchstart', () => bringToFront(cvWindow), { passive: true });
+mcWindow.addEventListener('touchstart', () => bringToFront(mcWindow), { passive: true });
+mailWindow.addEventListener('touchstart', () => bringToFront(mailWindow), { passive: true });
+
+// Generic drag setup — mouse and touch share the same geometry maths.
 function makeDraggable(titleBarEl, windowEl) {
+    // Records where the drag began and returns a function that moves the window
+    // to follow a pointer at (x, y).
+    function beginDrag(startX, startY) {
+        const il = windowEl.offsetLeft, it = windowEl.offsetTop;
+        bringToFront(windowEl);
+        return (x, y) => {
+            windowEl.style.left = `${il + (x - startX)}px`;
+            windowEl.style.top = `${it + (y - startY)}px`;
+        };
+    }
+
     titleBarEl.addEventListener('mousedown', (e) => {
         if (e.target.closest('button')) return;
         let dragging = true;
-        const sx = e.clientX, sy = e.clientY;
-        const il = windowEl.offsetLeft, it = windowEl.offsetTop;
-        bringToFront(windowEl);
+        const moveTo = beginDrag(e.clientX, e.clientY);
 
         const onMove = (e) => {
             if (!dragging) return;
-            windowEl.style.left = `${il + (e.clientX - sx)}px`;
-            windowEl.style.top = `${it + (e.clientY - sy)}px`;
+            moveTo(e.clientX, e.clientY);
         };
         const onUp = () => {
             dragging = false;
@@ -288,9 +373,100 @@ function makeDraggable(titleBarEl, windowEl) {
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
     });
+
+    titleBarEl.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button')) return;
+        if (e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        const moveTo = beginDrag(touch.clientX, touch.clientY);
+
+        const onMove = (e) => {
+            if (e.touches.length !== 1) return;
+            // Stop the page scrolling/rubber-banding under the drag.
+            e.preventDefault();
+            moveTo(e.touches[0].clientX, e.touches[0].clientY);
+        };
+        const onEnd = () => {
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
+            document.removeEventListener('touchcancel', onEnd);
+        };
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+        document.addEventListener('touchcancel', onEnd);
+    }, { passive: true });
 }
 makeDraggable(mcTitleBar, mcWindow);
 makeDraggable(mailTitleBar, mailWindow);
+
+// ---------------------------------------------------------------------------
+// Touch and keyboard activation for the icons.
+//
+// Desktop icons open on double-click, which touch devices do not have (and iOS
+// Safari reads a fast second tap as a zoom gesture). Every element carrying an
+// `ondblclick` attribute therefore also gets a single-tap and an Enter/Space
+// activation. Mouse behaviour is left exactly as it was.
+// ---------------------------------------------------------------------------
+const TAP_SLOP = 10; // px of finger travel still counted as a tap, not a drag
+
+function activateIcon(el, event) {
+    // The inline attribute is exposed as a function property on the element.
+    if (typeof el.ondblclick === 'function') el.ondblclick.call(el, event);
+}
+
+function enableTouchAndKeyboard(el) {
+    let startX = 0, startY = 0, moved = false;
+
+    el.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) { moved = true; return; }
+        moved = false;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    el.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        if (Math.abs(touch.clientX - startX) > TAP_SLOP ||
+            Math.abs(touch.clientY - startY) > TAP_SLOP) {
+            moved = true;
+        }
+    }, { passive: true });
+
+    el.addEventListener('touchend', (e) => {
+        if (moved) return;
+        // Swallow the synthesised click/dblclick so the icon opens exactly once.
+        e.preventDefault();
+        activateIcon(el, e);
+    }, { passive: false });
+
+    el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            activateIcon(el, e);
+        }
+    });
+}
+
+document.querySelectorAll('[ondblclick]').forEach(enableTouchAndKeyboard);
+
+// Re-fit the open windows when the viewport crosses the small-screen breakpoint
+// (rotation, or a desktop browser being resized).
+function handleScreenChange() {
+    [cvWindow, mcWindow, mailWindow].forEach(win => {
+        fitWindowToScreen(win);
+        win.dataset.state = 'normal';
+    });
+    if (!isSmallScreen()) {
+        centerWindow();
+        clampIntoView(mcWindow);
+        clampIntoView(mailWindow);
+    }
+}
+
+if (typeof smallScreen.addEventListener === 'function') {
+    smallScreen.addEventListener('change', handleScreenChange);
+}
 
 // Simple clock
 function updateTime() {
