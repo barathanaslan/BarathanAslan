@@ -786,9 +786,94 @@ body {
 .clippy-img {
     width: 124px;
     height: 93px;
-    background: url('https://raw.githubusercontent.com/smore-inc/clippy.js/master/agents/Clippy/map.png') no-repeat;
+    background: url('assets/clippy-map.png') no-repeat;
     background-position: -124px -93px;
     /* Frame roughly in the middle/idle */
     background-size: auto;
     flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Touch and reduced-motion support.
+   These properties have no effect on a mouse-driven desktop.
+   --------------------------------------------------------------------------- */
+
+/* Removes the double-tap-to-zoom delay on the things you tap to activate. */
+.desktop-icon,
+.folder-item,
+.task-button,
+.start-button {
+    touch-action: manipulation;
+}
+
+/* Title bars are drag handles, so the browser must not claim the gesture. */
+.title-bar {
+    touch-action: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .screen-layout,
+    .clippy-popup {
+        transition: none;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Small screens (phones). Windows fill the usable viewport instead of sitting
+   at fixed pixel sizes. Keep the 700px breakpoint in sync with app.js.
+   --------------------------------------------------------------------------- */
+@media screen and (max-width: 700px) {
+
+    body,
+    .screen-layout {
+        height: 100dvh;
+    }
+
+    /* The UA's 8px body margin would push a full-width window off the right. */
+    body {
+        margin: 0;
+    }
+
+    .screen-layout {
+        width: 100%;
+    }
+
+    .main-window,
+    .folder-window,
+    .mail-window {
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100vh - 28px);
+        height: calc(100dvh - 28px);
+    }
+
+    /* 5px mouse-only grab strips would just swallow taps at the edges. */
+    .resizer-l,
+    .resizer-r,
+    .resizer-b,
+    .resizer-br {
+        display: none;
+    }
+
+    /* Let several task buttons share the width instead of pushing the clock off. */
+    .task-button {
+        width: auto;
+        min-width: 0;
+        flex: 1 1 0;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .cv-content {
+        padding: 12px;
+        overflow-wrap: break-word;
+    }
+
+    /* Education rows: let the school and the city wrap instead of squeezing. */
+    .cv-content .column-right {
+        flex-wrap: wrap;
+    }
 }

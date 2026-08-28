@@ -81,3 +81,50 @@ Extract content faithfully. Do not reword, summarise, or "improve" any CV text.
 
 Mobile/touch support, SEO metadata, and reshaping the print output to match the
 real PDF. Those come next; do not start them.
+
+---
+
+# Phase 3 — mobile / touch support
+
+Branch `polish/structure`. Same rules: no build step, do not push, do not touch
+`main`, keep the Win98 aesthetic.
+
+## The problem (verified)
+
+- `style.css` has exactly **1** `@media` query in 793 lines.
+- `index.html` uses **10** `ondblclick` handlers. Double-click does not exist on
+  touch, so desktop icons cannot be opened on a phone at all.
+- `.main-window` is a hard `900px x 600px`; `.window-mycomputer` 350px tall and
+  `.window-mail` 400px. On a 390x844 phone these overflow badly.
+- Window dragging is wired to `mousedown`/`mousemove`/`mouseup` only — no touch
+  events, so windows cannot be moved on a phone.
+- 12 resize handles are mouse-only too.
+
+## Required
+
+1. **Touch-open the icons.** Every `ondblclick` needs a touch equivalent. On touch,
+   a single tap should open (double-tap-to-open is not a phone idiom and iOS
+   Safari treats a fast second tap as a zoom gesture). Keep double-click on
+   pointer devices so desktop behaviour is unchanged.
+2. **Draggable windows on touch.** Add `touchstart`/`touchmove`/`touchend`
+   alongside the mouse handlers in `makeDraggable`. Call `preventDefault` on
+   touchmove while dragging so the page doesn't scroll underneath.
+3. **Responsive windows.** Below ~700px wide, windows should fill the usable
+   viewport (minus the taskbar) rather than sit at fixed px sizes, and should not
+   be positioned off-screen by `centerWindow()`.
+4. **Keyboard access.** Icons are `<div>`s with no `tabindex` or key handling.
+   Give them `tabindex="0"`, `role="button"`, and Enter/Space activation.
+5. Respect `prefers-reduced-motion` for the fade-in.
+
+## Non-negotiable
+
+- Desktop appearance and behaviour at >=1280px must be **pixel-identical** to now.
+  Verify with a screenshot diff against https://barathanaslan.com before/after.
+- Do not redesign the Win98 look. No new colours, fonts, or chrome.
+- Do not alter `cv.json` content or the FormSubmit `_next` value.
+
+## Verify
+
+Test at 390x844 (iPhone), 768x1024 (iPad), and 1280x900. At each: every icon
+opens its window, windows can be dragged, content is readable without horizontal
+page scroll, and the taskbar is usable. Report a screenshot per breakpoint.

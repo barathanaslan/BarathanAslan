@@ -1,0 +1,190 @@
+{
+  "name": "Barathan Aslan",
+  "nameHref": "https://www.linkedin.com/in/barathanaslan/",
+  "location": "İstanbul, Türkiye",
+  "email": "barathanasln@gmail.com",
+
+  "profile": "Senior Computer Engineering student at Boğaziçi University with a fascination for pattern recognition and prediction. I apply this tendency across domains, from training ML and LLM models to analyzing markets. I value process over outcomes, and learn from both success and failure.",
+
+  "education": [
+    {
+      "period": "2021— Present",
+      "school": "Computer Engineering, Boğaziçi University",
+      "location": "İstanbul"
+    }
+  ],
+
+  "languages": [
+    { "language": "English", "level": "Professional working proficiency" },
+    { "language": "Spanish", "level": "Beginner" }
+  ],
+
+  "experience": [
+    {
+      "company": "Boğaziçi University – TRACE",
+      "title": "Research Assistant",
+      "period": "June 2026 – Present",
+      "subtitle": "Türkiye Real-time AI Catalog for Earthquake Monitoring & Early Warning — Kandilli Observatory, supported by Google.org",
+      "bullets": [
+        "Tracing earthquakes."
+      ]
+    },
+    {
+      "company": "Pegasus",
+      "title": "Associate Data Scientist",
+      "period": "July 2025 – July 2026",
+      "bullets": [
+        "Contributed to flight route prediction modeling, supporting operational planning and forecasting.",
+        "Active member of the AI Governance team, working on responsible-AI standards and oversight processes.",
+        "Identified and integrated previously unused data sources into company analytics, expanding analytical coverage across business units.",
+        "Engaged with external partners and vendors during technical evaluations and collaboration discussions."
+      ]
+    },
+    {
+      "company": "Fimple",
+      "title": "AI Intern",
+      "period": "June-August 2024",
+      "bullets": [
+        "Built a local RAG-powered chatbot agent for developers using open-source models, prioritizing data privacy.",
+        "Researched and partially developed natural-language-to-SQL models to enable non-technical banking staff to query data directly."
+      ]
+    },
+    {
+      "company": "Doping Technology",
+      "title": "Software Engineering Intern",
+      "period": "June-August 2023",
+      "bullets": [
+        "Developed a REST API leveraging a pre-trained BERT model for customer issue classification.",
+        "Contributed to Dopi AI, one of Türkiye's first large-scale chatbot agents, applying prompt engineering across open and closed source models.",
+        "Co-created No-Code App Development educational content."
+      ]
+    }
+  ],
+
+  "competitions": [
+    [
+      { "text": "AlgoRun Hackathon 2025:", "bold": true },
+      " 1st place"
+    ],
+    [
+      { "text": "Datathon AI 2024 – ITU AI Club:", "bold": true },
+      " 1st place (1/91 in qualification, 1/30 in finals)"
+    ],
+    [
+      { "text": "Trendyol Hackathon 2025:", "bold": true },
+      " 6th place out of 302 teams"
+    ],
+    [
+      { "text": "Teknofest T3 AI Hackathon 2024:", "bold": true },
+      " Final stage; built one of the largest, highest-quality synthetic Turkish LLM datasets (~1B tokens)"
+    ]
+  ],
+
+  "profiles": [
+    {
+      "platform": "Kaggle",
+      "handle": "@barathanaslan",
+      "href": "https://www.kaggle.com/barathanaslan",
+      "description": "Competitions, Dataset Creation, ML Models"
+    },
+    {
+      "platform": "Github",
+      "handle": "@barathanaslan",
+      "href": "https://github.com/barathanaslan",
+      "description": "Internship Projects & Personal Projects"
+    },
+    {
+      "platform": "Huggingface",
+      "handle": "@barathanasln",
+      "href": "https://huggingface.co/barathanasln",
+      "description": "Work On Various Language & Image Models, Synthetic Data Creation"
+    }
+  ],
+
+  "certifications": [
+    {
+      "title": [
+        {
+          "text": "Machine Learning Specialization, DeepLearning.AI",
+          "href": "https://www.coursera.org/account/accomplishments/specialization/TY5DZZNUBTTN?utm_source=link&utm_medium=certificate&utm_content=cert_image&utm_campaign=sharing_cta&utm_product=s12n"
+        }
+      ],
+      "subitem": [
+        "Supervised Machine Learning, Advanced Learning Algorithms, Unsupervised Learning, Recommenders, Reinforcement Learning"
+      ]
+    },
+    {
+      "title": [
+        {
+          "text": "Deep Learning Specialization, DeepLearning.AI",
+          "href": "https://www.coursera.org/account/accomplishments/specialization/R2Y8XS4FK50U?utm_source=link&utm_medium=certificate&utm_content=cert_image&utm_campaign=sharing_cta&utm_product=s12n"
+        }
+      ],
+      "subitem": [
+        "Neural Networks and Deep Learning, Improving Deep Neural Networks, Structuring Machine Learning Projects, Convolutional Neural Networks, Sequence Models"
+      ]
+    },
+    {
+      "title": [
+        "Investment Management with Python and Machine Learning, EDHEC"
+      ],
+      "subitem": [
+        {
+          "text": "Introduction to Portfolio Construction and Analysis with Python",
+          "href": "https://www.coursera.org/account/accomplishments/verify/2Q56SBPO2BLC"
+        },
+        ", ",
+        {
+          "text": "Advanced Portfolio Construction and Analysis with Python",
+          "href": "https://www.coursera.org/account/accomplishments/verify/55J64KXCP0K3"
+        },
+        ", ",
+        {
+          "text": "Python and Machine-Learning for Asset Management with Alternative Data Sets",
+          "href": "https://www.coursera.org/account/accomplishments/verify/TBV01IZTDZHH"
+        }
+      ]
+    },
+    {
+      "title": [
+        "Reinforcement Learning, University of Alberta"
+      ],
+      "subitem": [
+        {
+          "text": "Fundamentals of Reinforcement Learning",
+          "href": "https://www.coursera.org/account/accomplishments/verify/PY9CRYCQNVST"
+        },
+        ", ",
+        {
+          "text": "Sample-based Learning Methods",
+          "href": "https://www.coursera.org/account/accomplishments/verify/ZEGEBRR8KF1G"
+        }
+      ]
+    },
+    {
+      "title": [
+        {
+          "text": "Graph Neural Network, Udemy",
+          "href": "https://www.udemy.com/certificate/UC-6ea5afe0-9955-440d-a947-809e7b568f5b/"
+        }
+      ]
+    },
+    {
+      "title": [
+        "5-Day Gen AI Intensive Course, Kaggle & Google"
+      ]
+    },
+    {
+      "title": [
+        "ANBEAN Finans ve Yatırım Okulu"
+      ]
+    }
+  ],
+
+  "attendedEvents": [
+    "AWS Community Day Türkiye 2024",
+    "Claude Code Meetup Istanbul",
+    "GitHub Enterprise & Copilot Day",
+    "On-site visits to TUSAŞ, BIST, TCMB"
+  ]
+}
