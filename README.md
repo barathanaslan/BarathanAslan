@@ -1,3 +1,3 @@
 Hello world!
 
-https://barathanaslan.github.io/BarathanAslan/
+https://barathanaslan.com/
