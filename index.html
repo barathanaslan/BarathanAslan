@@ -5,6 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barathan Aslan - CV</title>
+
+    <!-- The CV renders from cv.json at runtime, so it is not in this source.
+         Search and link-preview crawlers rely on the metadata below. -->
+    <meta name="description"
+        content="Senior Computer Engineering student at Boğaziçi University, working on ML and LLM systems. CV, projects and contact — inside a Windows 98 desktop.">
+    <meta name="author" content="Barathan Aslan">
+    <link rel="canonical" href="https://barathanaslan.com/">
+
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Barathan Aslan">
+    <meta property="og:url" content="https://barathanaslan.com/">
+    <meta property="og:title" content="Barathan Aslan — Computer Engineering, Boğaziçi University">
+    <meta property="og:description"
+        content="Senior Computer Engineering student working on ML and LLM systems. My CV, served from a Windows 98 desktop.">
+    <meta property="og:image" content="https://barathanaslan.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="A Windows 98 desktop with Barathan Aslan's CV open in a window.">
+    <meta property="profile:first_name" content="Barathan">
+    <meta property="profile:last_name" content="Aslan">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Barathan Aslan — Computer Engineering, Boğaziçi University">
+    <meta name="twitter:description"
+        content="Senior Computer Engineering student working on ML and LLM systems. My CV, served from a Windows 98 desktop.">
+    <meta name="twitter:image" content="https://barathanaslan.com/assets/og-image.png">
+    <meta name="twitter:image:alt" content="A Windows 98 desktop with Barathan Aslan's CV open in a window.">
+
+    <link rel="icon" href="assets/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <meta name="theme-color" content="#008080">
+
     <!-- 98.css for the retro UI -->
     <link rel="stylesheet" href="assets/98.css">
     <!-- Custom styles -->
@@ -60,11 +93,30 @@
             <div class="window-body">
                 <div class="toolbar status-bar">
                     <button onclick="exportPDF()" style="font-weight: bold;">Export PDF</button>
-                    <p class="status-bar-field">Press button to save as PDF</p>
+                    <button onclick="window.open('BarathanAslanCV.pdf', '_blank')">Download PDF</button>
+                    <p class="status-bar-field">Print the page, or download the PDF</p>
                 </div>
 
                 <!-- Rendered at runtime from cv.json by app.js -->
-                <div class="cv-content"></div>
+                <div class="cv-content">
+                    <noscript>
+                        <h1>Barathan Aslan</h1>
+                        <p>Computer Engineering, Bo&#287;azi&#231;i University &mdash; &#304;stanbul, T&#252;rkiye</p>
+                        <p>Senior Computer Engineering student at Bo&#287;azi&#231;i University with a fascination for
+                            pattern recognition and prediction. I apply this tendency across domains, from training ML
+                            and LLM models to analyzing markets.</p>
+                        <p>Research Assistant at Bo&#287;azi&#231;i University &ndash; TRACE (June 2026 &ndash; present).
+                            Previously Associate Data Scientist at Pegasus, AI Intern at Fimple, and Software
+                            Engineering Intern at Doping Technology.</p>
+                        <p>
+                            <a href="mailto:barathanasln@gmail.com">barathanasln@gmail.com</a> &middot;
+                            <a href="https://www.linkedin.com/in/barathanaslan/">LinkedIn</a> &middot;
+                            <a href="https://github.com/barathanaslan">GitHub</a> &middot;
+                            <a href="BarathanAslanCV.pdf">Download CV (PDF)</a>
+                        </p>
+                        <p><strong>This page needs JavaScript for the full interactive CV.</strong></p>
+                    </noscript>
+                </div>
             </div>
             <!-- Resize Handles -->
             <div class="resizer-l"></div>
