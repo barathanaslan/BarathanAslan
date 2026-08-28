@@ -786,7 +786,7 @@ body {
 .clippy-img {
     width: 124px;
     height: 93px;
-    background: url('https://raw.githubusercontent.com/smore-inc/clippy.js/master/agents/Clippy/map.png') no-repeat;
+    background: url('assets/clippy-map.png') no-repeat;
     background-position: -124px -93px;
     /* Frame roughly in the middle/idle */
     background-size: auto;
