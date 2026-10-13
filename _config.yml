@@ -1,0 +1,8 @@
+# GitHub Pages builds this repository with Jekyll. The site itself needs no
+# processing; these paths are sources and notes, not pages.
+exclude:
+  - docs/
+  - status/
+  - README.md
+  - cv-html-template.html
+  - requirements.txt

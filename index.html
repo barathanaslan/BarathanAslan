@@ -42,52 +42,64 @@
     <link rel="stylesheet" href="assets/98.css">
     <!-- Custom styles -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="apps/apps.css">
 </head>
 
 <body>
-    <div class="screen-layout">
-        <!-- Desktop Icons -->
-        <div class="desktop-icons">
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="openMyComputer()">
-                <img src="assets/icons/computer_explorer-4.png" alt="My Computer">
-                <span>My Computer</span>
+    <div class="screen-layout" id="desktop">
+        <!-- Desktop icons. data-open names an app registered in app.js;
+             data-href makes the icon an Internet shortcut. -->
+        <div class="desktop-icons" id="desktop-icons">
+            <div class="desktop-icon" tabindex="0" role="button" data-open="mycomputer">
+                <span class="icon-img"><img src="assets/icons/my-computer-32.png" alt=""></span>
+                <span class="icon-label">My Computer</span>
             </div>
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="showClippy()">
-                <img src="assets/icons/recycle_bin_full-4.png" alt="Recycle Bin">
-                <span>Recycle Bin</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="mydocuments">
+                <span class="icon-img"><img src="assets/icons/my-documents-32.png" alt=""></span>
+                <span class="icon-label">My Documents</span>
             </div>
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="showClippy()">
-                <img src="assets/icons/directory_closed-4.png" alt="My Documents">
-                <span>My Documents</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="ie">
+                <span class="icon-img"><img src="assets/icons/ie-32.png" alt=""></span>
+                <span class="icon-label">Internet Explorer</span>
             </div>
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="showClippy()">
-                <img src="assets/icons/msie1-4.png" alt="Internet Explorer">
-                <span>Internet Explorer</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="recyclebin" id="recycle-bin-icon">
+                <span class="icon-img"><img src="assets/icons/recycle-full-32.png" alt=""></span>
+                <span class="icon-label">Recycle Bin</span>
             </div>
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="showClippy()">
-                <img src="assets/icons/notepad-5.png" alt="Notepad">
-                <span>Notepad</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="cv">
+                <span class="icon-img"><img src="assets/icons/document-32.png" alt=""></span>
+                <span class="icon-label">CV - Barathan Aslan.doc</span>
             </div>
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="openMail()">
-                <img src="assets/icons/outlook_express-4.png" alt="Send Mail">
-                <span>Send Mail</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="mail">
+                <span class="icon-img"><img src="assets/icons/mail-32.png" alt=""></span>
+                <span class="icon-label">Send Mail</span>
             </div>
-            <!-- New CV Icon -->
-            <div class="desktop-icon" tabindex="0" role="button" ondblclick="openCV()">
-                <img src="assets/icons/file_lines-0.png" alt="CV Doc">
-                <span>CV - Barathan Aslan.doc</span>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="notepad" data-file="readme.txt">
+                <span class="icon-img"><img src="assets/icons/text-file-32.png" alt=""></span>
+                <span class="icon-label">readme.txt</span>
+            </div>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="minesweeper">
+                <span class="icon-img shortcut"><img src="assets/icons/minesweeper-32.png" alt=""></span>
+                <span class="icon-label">Minesweeper</span>
+            </div>
+            <div class="desktop-icon" tabindex="0" role="button" data-open="solitaire">
+                <span class="icon-img shortcut"><img src="assets/icons/solitaire-32.png" alt=""></span>
+                <span class="icon-label">Solitaire</span>
+            </div>
+            <div class="desktop-icon" tabindex="0" role="button" data-href="https://observatory.barathanaslan.com">
+                <span class="icon-img shortcut"><img src="assets/icons/internet-32.png" alt=""></span>
+                <span class="icon-label">TRACE Observatory</span>
             </div>
         </div>
 
-        <!-- Main Window (CV) -->
-        <div class="window main-window" id="cv-window" style="display: none;">
-            <!-- Hidden by default initially or managed by script -->
-            <div class="title-bar" id="cv-title-bar">
+        <!-- CV window. Its content is rendered at runtime from cv.json by app.js. -->
+        <div class="window app-window main-window wm-hidden" id="cv-window" data-icon="document">
+            <div class="title-bar">
                 <div class="title-bar-text">CV - Barathan Aslan.doc</div>
                 <div class="title-bar-controls">
-                    <button aria-label="Minimize" onclick="minimizeWindow()"></button>
-                    <button aria-label="Maximize" onclick="maximizeWindow()"></button>
-                    <button aria-label="Close" onclick="closeWindow()"></button>
+                    <button aria-label="Minimize"></button>
+                    <button aria-label="Maximize"></button>
+                    <button aria-label="Close"></button>
                 </div>
             </div>
             <div class="window-body">
@@ -112,63 +124,24 @@
                             <a href="mailto:barathanasln@gmail.com">barathanasln@gmail.com</a> &middot;
                             <a href="https://www.linkedin.com/in/barathanaslan/">LinkedIn</a> &middot;
                             <a href="https://github.com/barathanaslan">GitHub</a> &middot;
+                            <a href="https://observatory.barathanaslan.com">TRACE Observatory</a> &middot;
+                            <a href="https://presser.ink/@barathan/craving-sugar">Craving Sugar (blog)</a> &middot;
                             <a href="BarathanAslanCV.pdf">Download CV (PDF)</a>
                         </p>
                         <p><strong>This page needs JavaScript for the full interactive CV.</strong></p>
                     </noscript>
                 </div>
             </div>
-            <!-- Resize Handles -->
-            <div class="resizer-l"></div>
-            <div class="resizer-r"></div>
-            <div class="resizer-b"></div>
-            <div class="resizer-br"></div>
         </div>
 
-        <!-- My Computer Window -->
-        <div class="window folder-window" id="mycomputer-window" style="display: none !important;">
-            <div class="title-bar" id="mycomputer-title-bar">
-                <div class="title-bar-text">My Computer</div>
-                <div class="title-bar-controls">
-                    <button aria-label="Minimize" onclick="minimizeMyComputer()"></button>
-                    <button aria-label="Maximize" onclick="maximizeMyComputer()"></button>
-                    <button aria-label="Close" onclick="closeMyComputer()"></button>
-                </div>
-            </div>
-            <div class="window-body">
-                <div class="toolbar">
-                    <p style="font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif;">3 object(s)</p>
-                </div>
-                <div class="folder-content">
-                    <div class="folder-item" tabindex="0" role="button" ondblclick="showClippy()">
-                        <img src="assets/icons/computer-4.png" alt="Computer">
-                        <span>Barathan'sMacBook</span>
-                    </div>
-                    <div class="folder-item" tabindex="0" role="button" ondblclick="showClippy()">
-                        <img src="assets/icons/computer-4.png" alt="Computer">
-                        <span>Barathan'sMacStudio</span>
-                    </div>
-                    <div class="folder-item" tabindex="0" role="button" ondblclick="showClippy()">
-                        <img src="assets/icons/computer-4.png" alt="Computer">
-                        <span>BarathanNeedsRAMforCudaSetup</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Resize Handles -->
-            <div class="resizer-l"></div>
-            <div class="resizer-r"></div>
-            <div class="resizer-b"></div>
-            <div class="resizer-br"></div>
-        </div>
-
-        <!-- Send Mail Window -->
-        <div class="window mail-window" id="mail-window" style="display: none !important;">
-            <div class="title-bar" id="mail-title-bar">
+        <!-- Send Mail window -->
+        <div class="window app-window mail-window wm-hidden" id="mail-window" data-icon="mail">
+            <div class="title-bar">
                 <div class="title-bar-text">Send Mail</div>
                 <div class="title-bar-controls">
-                    <button aria-label="Minimize" onclick="minimizeMail()"></button>
-                    <button aria-label="Maximize" onclick="maximizeMail()"></button>
-                    <button aria-label="Close" onclick="closeMail()"></button>
+                    <button aria-label="Minimize"></button>
+                    <button aria-label="Maximize"></button>
+                    <button aria-label="Close"></button>
                 </div>
             </div>
             <div class="window-body">
@@ -192,46 +165,33 @@
                     </div>
                 </form>
             </div>
-            <!-- Resize Handles -->
-            <div class="resizer-l"></div>
-            <div class="resizer-r"></div>
-            <div class="resizer-b"></div>
-            <div class="resizer-br"></div>
         </div>
 
-        <!-- Taskbar -->
+        <!-- Taskbar. Task buttons are added and removed by the window manager. -->
         <div class="taskbar">
-            <button class="start-button" onclick="showClippy()">
-                <img src="assets/icons/windows-0.png" alt="Start">
+            <button class="start-button" id="start-button" aria-haspopup="menu" aria-expanded="false">
+                <img src="assets/icons/windows-16.png" alt="">
                 <b>Start</b>
             </button>
             <div class="taskbar-divider"></div>
-            <div class="task-button" onclick="toggleMyComputer()" id="taskbar-mycomputer" style="display: none;">
-                <img src="assets/icons/computer_explorer-4.png" alt="My Computer">
-                My Computer
+            <div class="taskbar-tasks" id="taskbar-tasks"></div>
+            <div class="taskbar-tray" id="taskbar-tray">
+                <span class="taskbar-time" id="taskbar-time">04:20 PM</span>
             </div>
-            <div class="task-button" onclick="toggleMail()" id="taskbar-mail" style="display: none;">
-                <img src="assets/icons/outlook_express-4.png" alt="Send Mail">
-                Send Mail
-            </div>
-            <div class="task-button" onclick="toggleWindow()" id="taskbar-cv" style="display: none;">
-                <img src="assets/icons/file_lines-0.png" alt="CV">
-                CV - Baratha...
-            </div>
-            <div class="taskbar-time">04:20 PM</div>
         </div>
     </div>
 
-    <!-- Clippy Popup -->
-    <div id="clippy-popup" class="clippy-popup">
+    <!-- Clippy -->
+    <div id="clippy-popup" class="clippy-popup" role="status" aria-live="polite">
         <div class="clippy-img"></div>
-        <div class="clippy-bubble">
-            <p>It looks like you're trying to open something I haven't worked on yet!</p>
-            <p style="font-size: 11px; margin-top: 5px;">Maybe later... 📎</p>
-        </div>
+        <div class="clippy-bubble"></div>
     </div>
 
     <script defer src="app.js"></script>
+    <script defer src="apps/system.js"></script>
+    <script defer src="apps/network.js"></script>
+    <script defer src="apps/minesweeper.js"></script>
+    <script defer src="apps/solitaire.js"></script>
     <script src="print.js"></script>
 </body>
 

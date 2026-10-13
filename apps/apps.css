@@ -1,0 +1,1051 @@
+/* ===========================================================================
+   App styles. The desktop shell (windows, menus, taskbar) is in style.css.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Folder windows (My Computer, My Documents, Recycle Bin)
+   --------------------------------------------------------------------------- */
+.address-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 2px 4px;
+    flex-shrink: 0;
+    border-top: 1px solid #fff;
+    box-shadow: 0 -1px 0 #808080;
+    margin-top: 1px;
+}
+
+.address-label {
+    padding: 0 3px;
+    color: #000;
+}
+
+.address-field {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 21px;
+    padding: 0 4px;
+    background: #fff;
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.folder-main {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    overflow: hidden;
+    padding: 2px;
+}
+
+.folder-side {
+    width: 200px;
+    flex-shrink: 0;
+    padding: 12px 12px 12px 14px;
+    overflow-y: auto;
+    color: #000;
+}
+
+.folder-side-icon {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.folder-side-title {
+    font: bold 20px Arial, sans-serif;
+    line-height: 1.1;
+    margin-bottom: 6px;
+    word-break: break-word;
+}
+
+.folder-side-rule {
+    height: 2px;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #000080, #1084d0 45%, #ffcc33 75%, rgba(255, 204, 51, 0));
+}
+
+.folder-side-info p {
+    margin: 0 0 9px;
+    line-height: 1.4;
+}
+
+.folder-side-name {
+    font-weight: bold;
+}
+
+.folder-side-note {
+    color: #555;
+}
+
+.folder-side-info a {
+    word-break: break-all;
+}
+
+.folder-grid {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 14px 6px;
+    padding: 12px 8px;
+    overflow-y: auto;
+}
+
+.folder-item {
+    width: 86px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2px;
+    cursor: pointer;
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.folder-item .icon-label {
+    padding: 0 2px 1px;
+    line-height: 13px;
+    color: #000;
+    word-break: break-word;
+}
+
+.folder-item.selected .icon-label {
+    background: #000080;
+    color: #fff;
+}
+
+.folder-item:focus-visible .icon-label {
+    outline: 1px dotted #000;
+}
+
+/* Status light on a computer icon */
+.status-light {
+    position: absolute;
+    right: -4px;
+    bottom: -1px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    background: #a0a0a0;
+}
+
+.status-light.online {
+    background: radial-gradient(circle at 35% 35%, #b6ffb0, #00d000 55%, #008000);
+}
+
+.status-light.offline {
+    background: radial-gradient(circle at 35% 35%, #ffb0b0, #e00000 55%, #800000);
+}
+
+.status-light.unknown {
+    background: radial-gradient(circle at 35% 35%, #fff, #b0b0b0 55%, #707070);
+}
+
+/* Machine details and load bars */
+.machine-detail p {
+    margin: 0 0 6px;
+}
+
+.machine-state {
+    font-weight: bold;
+}
+
+.load-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.load-label {
+    width: 28px;
+    flex-shrink: 0;
+}
+
+.load-value {
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.progress-indicator.load-bar {
+    flex: 1;
+    min-width: 0;
+    height: 16px;
+    padding: 2px;
+}
+
+.progress-indicator.segmented.load-bar > .progress-indicator-bar {
+    background-image: linear-gradient(90deg, #000080 8px, transparent 0 2px);
+    background-size: 10px 100%;
+}
+
+/* Properties dialog */
+.properties-window {
+    width: 340px;
+    max-width: calc(100vw - 8px);
+}
+
+.props-panel {
+    margin-bottom: 10px;
+}
+
+.props-panel > .window-body {
+    margin: 12px;
+}
+
+.props-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.props-head .icon-img {
+    margin: 0;
+}
+
+.props-rule {
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #fff;
+    margin: 10px 0;
+}
+
+table.props-table {
+    background: transparent;
+    white-space: normal;
+}
+
+.props-table td {
+    vertical-align: top;
+    padding: 2px 8px 4px 0;
+    height: auto;
+    line-height: 1.35;
+}
+
+.props-table td:first-child {
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Internet Explorer
+   --------------------------------------------------------------------------- */
+.ie-toolbar {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    flex-shrink: 0;
+    border-top: 1px solid #fff;
+    box-shadow: 0 -1px 0 #808080;
+    margin-top: 1px;
+}
+
+.app-window button.ie-tool {
+    min-width: 54px;
+    height: 40px;
+    padding: 0 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow: none;
+    background: transparent;
+}
+
+.app-window button.ie-tool:not(:disabled):hover {
+    box-shadow: inset -1px -1px #808080, inset 1px 1px #fff;
+}
+
+.app-window button.ie-tool:not(:disabled):active {
+    box-shadow: inset 1px 1px #808080, inset -1px -1px #fff;
+}
+
+.ie-glyph {
+    font-size: 15px;
+    line-height: 16px;
+    text-shadow: 0 0 #000080;
+}
+
+.ie-tool:disabled .ie-glyph {
+    text-shadow: 1px 1px #fff;
+}
+
+.ie-address {
+    flex: 1;
+    min-width: 0;
+}
+
+.app-window button.ie-go {
+    min-width: 40px;
+}
+
+.ie-page {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+    margin: 2px 0 0;
+}
+
+.ie-content {
+    padding: 14px 20px 20px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #000;
+}
+
+.ie-content h2 {
+    font-size: 19px;
+    margin: 18px 0 8px;
+    color: #800080;
+}
+
+.ie-error-title {
+    font: bold 20px Arial, sans-serif;
+    margin: 4px 0 12px;
+}
+
+.home-banner h1 {
+    text-align: center;
+    font: bold 26px Georgia, "Times New Roman", serif;
+    color: #000080;
+    margin: 6px 0 12px;
+    text-shadow: 2px 2px #c0c0ff;
+}
+
+.marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    background: #ffff99;
+    border: 2px ridge #c0c0c0;
+    color: #c00000;
+    font: bold 13px Arial, sans-serif;
+    padding: 3px 0;
+    margin-bottom: 14px;
+}
+
+.marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 24s linear infinite;
+}
+
+@keyframes marquee {
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.home-links {
+    padding-left: 22px;
+    margin: 0;
+}
+
+.home-links li {
+    margin-bottom: 6px;
+}
+
+.under-construction {
+    margin: 22px auto 12px;
+    max-width: 280px;
+    text-align: center;
+    padding: 7px;
+    background: repeating-linear-gradient(45deg, #ffcc00 0 12px, #111 12px 24px);
+}
+
+.under-construction span {
+    background: #ffcc00;
+    padding: 2px 8px;
+    font: bold 13px Arial, sans-serif;
+    letter-spacing: 2px;
+}
+
+.home-footer {
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+}
+
+.window-status > p.ie-zone {
+    flex: 0 0 120px;
+}
+
+/* ---------------------------------------------------------------------------
+   Notepad
+   --------------------------------------------------------------------------- */
+.notepad-text {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    resize: none;
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 4px 6px;
+    white-space: pre-wrap;
+    color: #000;
+}
+
+.notepad-text.nowrap {
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Display Properties
+   --------------------------------------------------------------------------- */
+.display-window {
+    width: 410px;
+    max-width: calc(100vw - 8px);
+}
+
+.display-panel {
+    margin-bottom: 10px;
+}
+
+.display-panel > .window-body {
+    margin: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.monitor {
+    align-self: center;
+    position: relative;
+    padding: 12px 14px 18px;
+    margin-bottom: 12px;
+    background: #c0c0c0;
+    border-radius: 5px 5px 3px 3px;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+}
+
+.preview-screen {
+    position: relative;
+    width: 152px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 0 1px #404040;
+}
+
+.preview-desktop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+}
+
+.monitor-stand {
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    width: 80px;
+    height: 12px;
+    margin-left: -40px;
+    background: #c0c0c0;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080;
+}
+
+.display-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.display-list {
+    flex: 1;
+    min-width: 0;
+}
+
+.display-list p {
+    margin: 0 0 4px;
+}
+
+.listbox {
+    height: 120px;
+    overflow-y: auto;
+    padding: 3px;
+    outline: none;
+}
+
+.listbox:focus-visible {
+    outline: 1px dotted #000;
+}
+
+.listbox-item {
+    padding: 1px 3px;
+    cursor: default;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.listbox-item.selected {
+    background: #000080;
+    color: #fff;
+}
+
+.display-options {
+    width: 130px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 15px;
+}
+
+.display-options select {
+    width: 100%;
+}
+
+.field-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 6px;
+}
+
+.display-note {
+    margin: 8px 0 0;
+    color: #444;
+}
+
+/* ---------------------------------------------------------------------------
+   Run and Shut Down
+   --------------------------------------------------------------------------- */
+.run-window {
+    width: 380px;
+    max-width: calc(100vw - 8px);
+}
+
+.run-intro {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.run-intro p {
+    margin: 2px 0 0;
+    line-height: 1.4;
+}
+
+.run-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.run-row input {
+    flex: 1;
+    min-width: 0;
+}
+
+.shutdown-window {
+    width: 340px;
+    max-width: calc(100vw - 8px);
+}
+
+.shutdown-content {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.shutdown-content p {
+    margin: 4px 0 12px;
+}
+
+.power-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 40000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.power-screen p {
+    margin: 0;
+}
+
+.power-screen.standby {
+    background: #000;
+    cursor: none;
+}
+
+.power-screen.shutting-down {
+    background: linear-gradient(#6d9be6, #0b2a72);
+    color: #fff;
+    font: 18px Arial, sans-serif;
+}
+
+.shutting-down-title {
+    font: italic 52px Arial, sans-serif;
+    margin-bottom: 22px !important;
+}
+
+.shutting-down-title b {
+    font-weight: 900;
+}
+
+.power-screen.safe-to-turn-off {
+    background: #000;
+    color: #ff8c00;
+    font: bold 30px Arial, sans-serif;
+    line-height: 1.3;
+    cursor: pointer;
+}
+
+.power-hint {
+    margin-top: 36px !important;
+    font: 12px Arial, sans-serif;
+    color: #b87000;
+}
+
+.power-screen.booting {
+    background: #000;
+    color: #c0c0c0;
+    font: 16px "Lucida Console", "Courier New", monospace;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    padding: 24px;
+}
+
+/* ---------------------------------------------------------------------------
+   MS-DOS Prompt
+   --------------------------------------------------------------------------- */
+.dos-window > .window-body {
+    background: #000;
+}
+
+.dos-screen {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    background: #000;
+    color: #c0c0c0;
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.3;
+    padding: 6px 8px;
+    cursor: text;
+}
+
+pre.dos-output {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    font: inherit;
+    color: inherit;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.dos-line {
+    display: flex;
+}
+
+.dos-line.hidden {
+    display: none;
+}
+
+.dos-prompt {
+    white-space: pre;
+}
+
+.app-window input.dos-input {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    color: #c0c0c0;
+    font: inherit;
+    line-height: inherit;
+    caret-color: #c0c0c0;
+    outline: none;
+}
+
+.app-window.dos-window.dos-fullscreen {
+    position: fixed;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none;
+    z-index: 30000 !important;
+    padding: 0;
+    box-shadow: none;
+    background: #000;
+}
+
+.dos-fullscreen > .title-bar,
+.dos-fullscreen > [class^="resizer-"] {
+    display: none !important;
+}
+
+.dos-fullscreen > .window-body {
+    margin: 0;
+}
+
+.dos-fullscreen .dos-screen {
+    font-size: 18px;
+    padding: 16px;
+}
+
+/* ---------------------------------------------------------------------------
+   Minesweeper
+   --------------------------------------------------------------------------- */
+.mine-frame {
+    padding: 6px;
+    background: #c0c0c0;
+    box-shadow: inset 2px 2px #fff, inset -2px -2px #808080;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.mine-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    margin-bottom: 6px;
+    box-shadow: inset 2px 2px #808080, inset -2px -2px #fff;
+}
+
+.mine-led {
+    background: #000;
+    padding: 1px 2px;
+    line-height: 0;
+    box-shadow: inset 1px 1px #808080, inset -1px -1px #fff;
+}
+
+.mine-led svg {
+    display: block;
+}
+
+.app-window button.mine-face {
+    width: 26px;
+    height: 26px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mine-face svg {
+    display: block;
+}
+
+.mine-board-wrap {
+    padding: 3px;
+    box-shadow: inset 3px 3px #808080, inset -3px -3px #fff;
+    overflow: auto;
+}
+
+.mine-board {
+    --cell: 16px;
+    display: grid;
+    grid-auto-rows: var(--cell);
+    width: max-content;
+    touch-action: none;
+    cursor: default;
+}
+
+.mine-cell {
+    width: var(--cell);
+    height: var(--cell);
+    background-color: #c0c0c0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75% 75%;
+    box-shadow: inset -2px -2px #808080, inset 2px 2px #fff;
+    font: bold calc(var(--cell) * 0.78) / var(--cell) Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: #000;
+}
+
+.mine-cell.revealed,
+.mine-cell.pressed {
+    box-shadow: inset 1px 1px #808080;
+}
+
+.mine-cell.n1 { color: #0000ff; }
+.mine-cell.n2 { color: #008000; }
+.mine-cell.n3 { color: #ff0000; }
+.mine-cell.n4 { color: #000080; }
+.mine-cell.n5 { color: #800000; }
+.mine-cell.n6 { color: #008080; }
+.mine-cell.n7 { color: #000; }
+.mine-cell.n8 { color: #808080; }
+
+.mine-cell.flag,
+.mine-flag-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M9 2v6L3 5z' fill='%23f00'/%3E%3Cpath d='M9 2h1v9H9zM6 11h6v1H6zM4 12h10v2H4z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.mine-cell.question::before {
+    content: "?";
+    color: #000;
+}
+
+.mine-cell.mine {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5v13M1.5 8h13M3.5 3.5l9 9M12.5 3.5l-9 9' stroke='%23000' stroke-width='1.3'/%3E%3Ccircle cx='8' cy='8' r='4.6'/%3E%3Crect x='5.6' y='5.6' width='2' height='2' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.mine-cell.exploded {
+    background-color: #ff0000;
+}
+
+.mine-cell.wrong {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 2l12 12M14 2L2 14' stroke='%23f00' stroke-width='1.6'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5v13M1.5 8h13M3.5 3.5l9 9M12.5 3.5l-9 9' stroke='%23000' stroke-width='1.3'/%3E%3Ccircle cx='8' cy='8' r='4.6'/%3E%3Crect x='5.6' y='5.6' width='2' height='2' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.mine-touchbar {
+    display: flex;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.mine-flag-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.app-window button.mine-flag-toggle.active {
+    box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    font-weight: bold;
+}
+
+.mine-flag-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-size: 100% 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Solitaire
+   --------------------------------------------------------------------------- */
+.sol-table {
+    --cw: 71px;
+    --ch: 96px;
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    margin-top: 2px;
+    overflow: hidden;
+    background: #008000;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.sol-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--cw);
+    height: var(--ch);
+    border-radius: calc(var(--cw) * 0.07);
+    box-shadow: inset 0 0 0 1px #004d00;
+}
+
+.sol-slot.stock::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44%;
+    height: 32%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 3px solid #004d00;
+}
+
+.sol-slot.stock.can-recycle {
+    cursor: pointer;
+}
+
+.sol-slot.stock.can-recycle::after {
+    border-color: #00c000;
+}
+
+.sol-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--cw);
+    height: var(--ch);
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: calc(var(--cw) * 0.07);
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    transition: transform 0.12s ease-out;
+    will-change: transform;
+}
+
+.sol-card.red {
+    color: #d00000;
+}
+
+.sol-card.dragging {
+    transition: none;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.45);
+}
+
+.sol-card.back {
+    padding: calc(var(--cw) * 0.05);
+    background-clip: content-box;
+    background-color: #1c3f9c;
+    background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.32) 0 1px, rgba(0, 0, 0, 0) 1px 6px),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.32) 0 1px, rgba(0, 0, 0, 0) 1px 6px);
+    box-shadow: inset 0 0 0 calc(var(--cw) * 0.05) #fff;
+}
+
+.sol-card.back .sol-face {
+    display: none;
+}
+
+.sol-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.sol-corner {
+    position: absolute;
+    width: calc(var(--cw) * 0.2);
+    text-align: center;
+    font: bold calc(var(--cw) * 0.17) / 1 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.04em;
+}
+
+.sol-corner.tl {
+    left: 1px;
+    top: 3px;
+}
+
+.sol-corner.br {
+    right: 1px;
+    bottom: 3px;
+    transform: rotate(180deg);
+}
+
+.sol-pip {
+    position: absolute;
+    font-size: calc(var(--cw) * 0.21);
+    line-height: 1;
+    transform: translate(-50%, -50%);
+}
+
+.sol-pip.flip {
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.sol-ace {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: calc(var(--cw) * 0.5);
+    line-height: 1;
+}
+
+.sol-court {
+    position: absolute;
+    inset: 17% 21%;
+    border: 1px solid currentColor;
+    background: #fff8dc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.sol-court-letter {
+    font: bold calc(var(--cw) * 0.36) Georgia, "Times New Roman", serif;
+}
+
+.sol-court-suit {
+    font-size: calc(var(--cw) * 0.18);
+}
+
+.sol-cascade {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2000;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion and small screens
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    .sol-card {
+        transition: none;
+    }
+
+    .marquee span {
+        animation: none;
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 700px) {
+
+    .folder-side {
+        display: none;
+    }
+
+    .folder-grid {
+        justify-content: space-around;
+    }
+
+    .ie-content {
+        padding: 10px 12px 16px;
+    }
+
+    .home-banner h1 {
+        font-size: 21px;
+    }
+
+    .display-controls {
+        flex-direction: column;
+    }
+
+    .display-options {
+        width: auto;
+        padding-top: 0;
+    }
+
+    .listbox {
+        height: 96px;
+    }
+}

@@ -1,40 +1,46 @@
-# Status — 2026-08-28
+# Status — 2026-10-13
 
 ## Done
 
-- **Custom domain migration complete.** `barathanaslan.com` serves the site over
-  HTTPS. Verified: apex 200; http→https 301; www→apex 301; old
-  `barathanaslan.github.io/BarathanAslan/` → apex 301. Cert valid to 2026-11-26.
-- 9 DNS records in Cloudflare (4 A, 4 AAAA, 1 CNAME for www), all DNS-only.
-- **Phase 1 — assets vendored.** All 12 third-party assets now local under
-  `assets/`, including the four webfonts 98.css pulls in by relative path. Zero
-  off-origin requests. The unpinned `unpkg.com/98.css` dependency is gone.
-- **Phase 2 — code split.** ~300 lines of inline JS moved verbatim to `app.js`;
-  the CV renders from `cv.json`. Verified byte-identical CV text (3393 chars).
-- **Phase 3 — mobile and touch.** Single-tap opens icons, windows drag by touch,
-  windows fill the viewport below 700px, icons are keyboard-focusable, and
-  `prefers-reduced-motion` is honoured. Desktop ≥1280px is pixel-identical.
-- **Phase 4 — SEO and metadata.** description, canonical, Open Graph, Twitter
-  card, favicon set, `robots.txt`, `sitemap.xml`, a `<noscript>` fallback, and a
-  Download PDF button that finally exposes `BarathanAslanCV.pdf`.
-- Fixed a long-standing bug: the taskbar CV icon pointed at `wordpad-0.png`,
-  which returns AccessDenied upstream. It had always rendered broken on live.
-- Replaced the stale committed CV PDF (it predated TRACE and Pegasus and carried
-  a phone number) with the current one.
-
-## Measured before/after at 390x844
-
-| | Before | After |
-|---|---|---|
-| Horizontal overflow | 23px | 0 |
-| CV window | 351x600 at (62,205) | 390x816, fills screen |
-| Tap an icon | nothing happens | opens |
+- **Interactive desktop ("Barathan 98").** Every icon works now. New: a window
+  manager shared by all apps, a Start menu (Programs, Documents, Settings,
+  Help, Run, Shut Down), a desktop context menu, wallpapers (Display
+  Properties), My Documents with shortcuts to the TRACE Observatory, Craving
+  Sugar, GitHub and more, an Internet Explorer home page, Notepad with
+  readme.txt, a Recycle Bin of jokes, an MS-DOS prompt, Minesweeper and
+  Solitaire. Plan and decisions: `plans/2026-10-13-interactive-desktop.md`.
+- **Live machine status.** `status.barathanaslan.com` (Worker
+  `barathan98-status` + KV) receives a sanitised `tailmon json` summary from
+  the Mac mini every 2 minutes (launchd `com.barathan.barathan98-status`).
+  My Computer, machine Properties, `ping` and `tailmon` in the DOS prompt, and
+  the tray icon all read it. Verified: unauthenticated and wrong-token reports
+  get 401, unknown paths 404, missing values stay null.
+- Icons replaced with crisp native 16/32px versions (from
+  `alexh/vintage-icons`; the old win98icons site now refuses requests).
+- The UA's 8px `body` margin is gone, which also removes the old 8px horizontal
+  overflow on desktop, and maximise now really fills the screen (it used to stop
+  at 90% width).
+- Tested in the browser at 1280x800 and 390x844: every app opens without
+  console errors; Solitaire was played to a win by a scripted player (rules,
+  undo, auto-finish, finale); Minesweeper won and lost by a scripted solver
+  (first click safe, flood fill, chord, flags, best time); touch long-press
+  flagging and Flag mode; Notepad save/close prompt; DOS ping/tailmon against
+  real Worker data.
+- An independent review pass found one critical bug (the Solitaire finale
+  re-opened its "Deal again?" box every frame) and a dozen smaller ones
+  (window restore across the 700px breakpoint, Notepad "No" keeping edits,
+  unbounded z-index, status that never aged when fetches failed, timers that
+  outlived a game, a missing 16px Minesweeper icon, Worker forgetting
+  hardware/last-seen for absent hosts...). All fixed and re-tested.
 
 ## Open items
 
 - The old CV PDF with a phone number is still in git history, and the repo is
   public. Removing it needs a history rewrite and force-push — not done.
-- Pre-existing 8px horizontal overflow at desktop widths (`body` UA margin +
-  `.screen-layout { width: 100vw }`). Present on the original site too; fixing it
-  globally would shift every desktop pixel, so it was fixed only below 700px.
+- Wallpaper photos: waiting for Barathan's pictures (see "Wallpapers" in
+  `overview.md` for how to add them).
+- `og-image.png` still shows the old desktop.
+- Privacy call for Barathan: the MacBook's awake/asleep state and "last seen
+  awake" time are public, which hints at when Barathan is at the laptop. Dropping it
+  means removing it from `MACHINES` (`apps/network.js`) and both `HOSTS` lists.
 - `cv-html-template.html` is still an unreferenced orphan. Candidate for deletion.

@@ -1,0 +1,16 @@
+// Status relay for the "My Computer" window on barathanaslan.com.
+// Deploy: `npx wrangler deploy` from this folder (wrangler 4).
+// The report token is a secret: `wrangler secret put REPORT_TOKEN`.
+{
+    "name": "barathan98-status",
+    "main": "src/index.js",
+    "compatibility_date": "2026-10-01",
+    "workers_dev": false,
+    "routes": [
+        { "pattern": "status.barathanaslan.com", "custom_domain": true }
+    ],
+    "kv_namespaces": [
+        { "binding": "STATUS", "id": "6e450f73525141858936ccc3f80b67c6" }
+    ],
+    "observability": { "enabled": true }
+}
