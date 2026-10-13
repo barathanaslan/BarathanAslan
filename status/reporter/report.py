@@ -16,6 +16,9 @@ import sys
 import urllib.request
 
 HOSTS = ("barathans-mini", "barathans-5090", "barathans-macbook")
+# This script runs on the mini. When tailmon cannot reach Tailscale it names
+# the local machine by its OS hostname, so the local entry is always the mini.
+LOCAL_HOST = "barathans-mini"
 ENDPOINT = "https://status.barathanaslan.com/v1/report"
 TOKEN_FILE = os.path.expanduser("~/.config/barathan98-status/token")
 TAILMON = os.path.expanduser("~/bin/tailmon")
@@ -30,7 +33,8 @@ def number(value):
 def summarise(doc):
     hosts = []
     for entry in doc.get("hosts", []):
-        if entry.get("host") not in HOSTS:
+        host_id = LOCAL_HOST if entry.get("source") == "local" else entry.get("host")
+        if host_id not in HOSTS:
             continue
         stats = entry.get("stats") or {}
         cpu = stats.get("cpu") or {}
@@ -42,7 +46,7 @@ def summarise(doc):
         vram_mb = number(gpu.get("vram_total_mb"))
         uptime = number(stats.get("uptime_sec"))
         hosts.append({
-            "id": entry["host"],
+            "id": host_id,
             "status": entry.get("status"),
             "os": entry.get("os"),
             "cpu_pct": number(cpu.get("percent")),
