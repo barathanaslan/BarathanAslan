@@ -1441,13 +1441,73 @@ function loadCV() {
 // Boot
 // ---------------------------------------------------------------------------
 
-// Kick the fetch off immediately, but hold the fade-in until the CV is in the
-// DOM so the window never flashes empty.
+// Kick the fetch off immediately; the CV window opens at the end of the boot.
 const cvLoaded = loadCV();
 
-window.addEventListener('load', () => {
-    WM.open('cv');
-    cvLoaded.then(() => {
-        document.querySelector('.screen-layout').classList.add('ready');
-    });
-});
+// The boot: a BIOS screen with a memory count, the splash screen, then the
+// desktop filling in piece by piece (wallpaper, taskbar, icons one at a time,
+// the CV). Any click or key press skips straight to the finished desktop.
+// With reduced motion the desktop appears at once.
+const Boot = (() => {
+    const overlay = document.getElementById('boot');
+    const bios = overlay.querySelector('.boot-bios');
+    const desktop = document.getElementById('desktop');
+    const icons = [...document.querySelectorAll('#desktop-icons .desktop-icon')];
+    const timers = [];
+    let finished = false;
+
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const print = text => bios.appendChild(document.createTextNode(text));
+
+    function finish() {
+        if (finished) return;
+        finished = true;
+        timers.forEach(clearTimeout);
+        window.removeEventListener('keydown', finish, true);
+        window.removeEventListener('pointerdown', finish, true);
+        overlay.remove();
+        icons.forEach(icon => icon.classList.remove('pending'));
+        desktop.classList.remove('loading');
+        desktop.classList.add('ready');
+        cvLoaded.then(() => WM.open('cv'));
+    }
+
+    function run() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            finish();
+            return;
+        }
+        window.addEventListener('keydown', finish, true);
+        window.addEventListener('pointerdown', finish, true);
+        desktop.classList.add('loading');
+        icons.forEach(icon => icon.classList.add('pending'));
+
+        // BIOS: version, memory test counting up, drives.
+        print('B98 BIOS v4.10\nCopyright (C) 1998\n\nMemory Test: ');
+        const memory = document.createTextNode('0K');
+        bios.appendChild(memory);
+        const TOTAL_KB = 65536;
+        for (let step = 1; step <= 16; step++) {
+            at(80 + step * 35, () => { memory.textContent = `${(TOTAL_KB * step) / 16}K${step === 16 ? ' OK' : ''}`; });
+        }
+        at(800, () => print('\n\nDetecting IDE drives...'));
+        at(1100, () => print('\n  Primary Master: BARATHAN98 C:'));
+        at(1450, () => print('\n\nStarting Barathan 98...'));
+
+        // Splash screen with the moving bar.
+        at(1900, () => overlay.classList.add('splash'));
+
+        // Desktop: wallpaper first, then the taskbar, then the icons.
+        at(4000, () => {
+            overlay.classList.add('gone');
+            desktop.classList.add('ready');
+        });
+        at(4500, () => desktop.classList.add('taskbar-up'));
+        icons.forEach((icon, i) => at(4900 + i * 130, () => icon.classList.remove('pending')));
+        at(4900 + icons.length * 130 + 350, finish);
+    }
+
+    return { run, finish };
+})();
+
+Boot.run();

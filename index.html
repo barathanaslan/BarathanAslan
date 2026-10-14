@@ -38,6 +38,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <meta name="theme-color" content="#008080">
 
+    <!-- Marks that JavaScript runs, so the boot screen shows from the first
+         frame. Without JavaScript the boot screen stays hidden. -->
+    <script>document.documentElement.classList.add('js');</script>
+
     <!-- 98.css for the retro UI -->
     <link rel="stylesheet" href="assets/98.css">
     <!-- Custom styles -->
@@ -46,6 +50,15 @@
 </head>
 
 <body>
+    <!-- Boot screen, driven by Boot in app.js -->
+    <div id="boot" class="boot" aria-hidden="true">
+        <pre class="boot-bios"></pre>
+        <div class="boot-splash">
+            <p class="boot-logo"><b>Barathan</b>98</p>
+            <div class="boot-bar"></div>
+        </div>
+    </div>
+
     <div class="screen-layout" id="desktop">
         <!-- Desktop icons. data-open names an app registered in app.js;
              data-href makes the icon an Internet shortcut. -->

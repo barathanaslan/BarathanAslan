@@ -757,21 +757,80 @@ function powerScreen(className, content) {
     return screen;
 }
 
+// A restart is a page reload: the boot sequence in app.js does the rest.
 function bootAgain() {
-    powerScreen('booting', h('p', null, 'Starting Barathan 98...'));
-    setTimeout(() => window.location.reload(), 1200);
+    window.location.reload();
+}
+
+// Stand-by and shut-down screen: the logo drifts across a black screen and
+// changes colour each time it bounces off an edge. A click or a key press
+// calls onWake.
+const BOUNCE_COLOURS = ['#ffffff', '#ff5555', '#55ff55', '#5599ff', '#ffff55', '#ff55ff', '#55ffff', '#ffaa33'];
+
+function bounceScreen(onWake) {
+    const logo = h('div', { class: 'bounce-logo' }, h('b', null, 'Barathan'), '98');
+    const screen = powerScreen('bounce', logo);
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let colour = Math.floor(Math.random() * BOUNCE_COLOURS.length);
+    logo.style.color = BOUNCE_COLOURS[colour];
+
+    let x = Math.random() * Math.max(0, screen.clientWidth - logo.offsetWidth);
+    let y = Math.random() * Math.max(0, screen.clientHeight - logo.offsetHeight);
+    let vx = Math.random() < 0.5 ? -1.5 : 1.5;
+    let vy = Math.random() < 0.5 ? -1.2 : 1.2;
+    let last = performance.now();
+    let frame = 0;
+
+    const step = now => {
+        const dt = Math.min(50, now - last) / 16.7;
+        last = now;
+        const maxX = screen.clientWidth - logo.offsetWidth;
+        const maxY = screen.clientHeight - logo.offsetHeight;
+        x += vx * dt;
+        y += vy * dt;
+        let bounced = false;
+        if (x <= 0 || x >= maxX) {
+            x = clamp(x, 0, Math.max(0, maxX));
+            vx = -vx;
+            bounced = true;
+        }
+        if (y <= 0 || y >= maxY) {
+            y = clamp(y, 0, Math.max(0, maxY));
+            vy = -vy;
+            bounced = true;
+        }
+        if (bounced) {
+            colour = (colour + 1 + Math.floor(Math.random() * (BOUNCE_COLOURS.length - 1))) % BOUNCE_COLOURS.length;
+            logo.style.color = BOUNCE_COLOURS[colour];
+        }
+        logo.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+        frame = requestAnimationFrame(step);
+    };
+
+    if (still) {
+        logo.style.transform = `translate(${Math.round((screen.clientWidth - logo.offsetWidth) / 2)}px, ` +
+            `${Math.round((screen.clientHeight - logo.offsetHeight) / 2)}px)`;
+    } else {
+        frame = requestAnimationFrame(step);
+    }
+
+    const wake = () => {
+        cancelAnimationFrame(frame);
+        screen.removeEventListener('pointerdown', wake);
+        window.removeEventListener('keydown', wake, true);
+        onWake(screen);
+    };
+    // Wait a moment so the click that chose Shut Down does not wake it.
+    setTimeout(() => {
+        screen.addEventListener('pointerdown', wake);
+        window.addEventListener('keydown', wake, true);
+    }, 400);
 }
 
 function shutDown(mode) {
     Menus.closeAll();
     if (mode === 'standby') {
-        const screen = powerScreen('standby', null);
-        const wake = () => {
-            screen.remove();
-            window.removeEventListener('keydown', wake);
-        };
-        screen.addEventListener('pointerdown', wake);
-        window.addEventListener('keydown', wake);
+        bounceScreen(screen => screen.remove());
         return;
     }
     if (mode === 'dos') {
@@ -786,18 +845,7 @@ function shutDown(mode) {
             bootAgain();
             return;
         }
-        const screen = powerScreen('safe-to-turn-off', h('div', null,
-            h('p', null, "It's now safe to turn off"),
-            h('p', null, 'your computer.'),
-            h('p', { class: 'power-hint' }, 'Click anywhere to turn it back on.')));
-        let booted = false;
-        const boot = () => {
-            if (booted) return;
-            booted = true;
-            bootAgain();
-        };
-        screen.addEventListener('pointerdown', boot);
-        window.addEventListener('keydown', boot);
+        bounceScreen(bootAgain);
     }, 1600);
 }
 

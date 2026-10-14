@@ -62,6 +62,20 @@ returns a Promise of the button pressed.
 Desktop icons declare what they do in markup: `data-open="<app id>"` (plus an
 optional `data-file`) or `data-href="<url>"`. No JS change is needed to add one.
 
+### Boot and shut-down
+
+- `Boot` (end of `app.js`) runs on every page load: a BIOS screen with a
+  memory count, the splash screen with a moving bar, then the desktop filling
+  in (wallpaper, taskbar, icons one at a time, the CV window), about 6.5 s in
+  all. Any click or key press skips to the finished desktop; with reduced
+  motion it is skipped entirely. The `#boot` overlay is in `index.html` and
+  only shows when the inline script in `<head>` has added the `js` class, so
+  a browser without JavaScript never gets stuck behind it.
+- Shut Down → Stand by / Shut down show `bounceScreen()` (`apps/system.js`):
+  the wordmark drifts and changes colour at each edge, DVD-player style. A
+  click wakes from stand-by back to the same desktop; after Shut down it
+  reloads the page, which boots again. Restart reloads straight away.
+
 ### Small screens and touch
 
 - Breakpoint **700px**, declared in `style.css`, `apps/apps.css` and

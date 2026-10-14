@@ -28,6 +28,94 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Boot (Boot in app.js). Shown only when JavaScript runs.
+   --------------------------------------------------------------------------- */
+.boot {
+    display: none;
+}
+
+.js .boot {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50000;
+    background: #000;
+    cursor: progress;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: opacity 0.3s;
+}
+
+.boot.gone {
+    opacity: 0;
+    pointer-events: none;
+}
+
+pre.boot-bios {
+    margin: 0;
+    padding: 24px;
+    background: transparent;
+    box-shadow: none;
+    color: #c0c0c0;
+    font: 15px/1.4 "Lucida Console", "Courier New", monospace;
+    white-space: pre-wrap;
+}
+
+.boot-splash {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 42%, #3a6fc4, #0d2f7a 58%, #06173f);
+    color: #fff;
+}
+
+.boot.splash .boot-bios {
+    display: none;
+}
+
+.boot.splash .boot-splash {
+    display: flex;
+}
+
+.boot-logo {
+    margin: 0 0 8vh;
+    font: italic 56px Arial, sans-serif;
+    text-shadow: 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.boot-logo b {
+    font-weight: 900;
+}
+
+.boot-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 14px;
+    background: linear-gradient(90deg, #0d2f7a 0, #2c63c9 20%, #b9d4ff 30%, #2c63c9 40%, #0d2f7a 60%, #0d2f7a 100%) 0 0 / 600px 100% repeat-x;
+    animation: boot-bar 1.2s linear infinite;
+}
+
+@keyframes boot-bar {
+    to {
+        background-position: 600px 0;
+    }
+}
+
+/* The desktop fills in during the boot: taskbar first, then icons. */
+.screen-layout.loading {
+    cursor: progress;
+}
+
+.screen-layout.loading:not(.taskbar-up) .taskbar,
+.desktop-icon.pending {
+    visibility: hidden;
+}
+
+/* ---------------------------------------------------------------------------
    Desktop icons
    --------------------------------------------------------------------------- */
 .desktop-icons {
@@ -1104,6 +1192,10 @@ body {
     .clippy-popup {
         transition: none;
     }
+
+    .boot-bar {
+        animation: none;
+    }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1112,6 +1204,15 @@ body {
    stay centred. Keep the 700px breakpoint in sync with app.js.
    --------------------------------------------------------------------------- */
 @media screen and (max-width: 700px) {
+
+    .boot-logo {
+        font-size: 36px;
+    }
+
+    pre.boot-bios {
+        padding: 16px;
+        font-size: 13px;
+    }
 
     .app-window:not(.fixed-size) {
         top: 0;

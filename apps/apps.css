@@ -522,11 +522,6 @@ table.props-table {
     margin: 0;
 }
 
-.power-screen.standby {
-    background: #000;
-    cursor: none;
-}
-
 .power-screen.shutting-down {
     background: linear-gradient(#6d9be6, #0b2a72);
     color: #fff;
@@ -542,28 +537,31 @@ table.props-table {
     font-weight: 900;
 }
 
-.power-screen.safe-to-turn-off {
+.power-screen.bounce {
+    display: block;
     background: #000;
-    color: #ff8c00;
-    font: bold 30px Arial, sans-serif;
-    line-height: 1.3;
     cursor: pointer;
+    overflow: hidden;
 }
 
-.power-hint {
-    margin-top: 36px !important;
-    font: 12px Arial, sans-serif;
-    color: #b87000;
+.bounce-logo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font: italic 44px Arial, sans-serif;
+    white-space: nowrap;
+    will-change: transform;
 }
 
-.power-screen.booting {
-    background: #000;
-    color: #c0c0c0;
-    font: 16px "Lucida Console", "Courier New", monospace;
-    justify-content: flex-start;
-    align-items: flex-start;
-    text-align: left;
-    padding: 24px;
+.bounce-logo b {
+    font-weight: 900;
+}
+
+@media screen and (max-width: 700px) {
+
+    .bounce-logo {
+        font-size: 30px;
+    }
 }
 
 /* ---------------------------------------------------------------------------

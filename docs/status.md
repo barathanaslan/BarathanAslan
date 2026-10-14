@@ -37,6 +37,10 @@
   Recycle Bin jokes, machine "role" blurbs). Meta descriptions now use the CV's
   profile sentence. See the copy rule in `overview.md`.
 
+- 2026-10-14: realistic boot (BIOS → splash → desktop filling in; click to
+  skip) and a bouncing-logo screen for Stand by and Shut down, replacing
+  "It's now safe to turn off your computer".
+
 ## Open items
 
 - The old CV PDF with a phone number is still in git history, and the repo is
