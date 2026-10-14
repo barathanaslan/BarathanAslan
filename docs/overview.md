@@ -1,6 +1,6 @@
 # barathanaslan.com — personal portfolio
 
-A Windows 98 desktop ("Barathan 98") that presents Barathan Aslan's CV, with
+A Windows 98 desktop that presents Barathan Aslan's CV, with
 working apps around it: folders of links, Internet Explorer, Notepad, an
 MS-DOS prompt, Minesweeper, Solitaire, wallpapers, and a live view of which of
 Barathan's computers are awake.
@@ -64,6 +64,8 @@ optional `data-file`) or `data-href="<url>"`. No JS change is needed to add one.
 
 ### Boot and shut-down
 
+- No name or wordmark for the desktop itself: the boot splash, shut-down
+  screens and Start banner use the Windows flag icon (`windows-32.png`).
 - `Boot` (end of `app.js`) runs on every page load: a BIOS screen with a
   memory count, the splash screen with a moving bar, then the desktop filling
   in (wallpaper, taskbar, icons one at a time, the CV window), about 6.5 s in
@@ -72,7 +74,7 @@ optional `data-file`) or `data-href="<url>"`. No JS change is needed to add one.
   only shows when the inline script in `<head>` has added the `js` class, so
   a browser without JavaScript never gets stuck behind it.
 - Shut Down → Stand by / Shut down show `bounceScreen()` (`apps/system.js`):
-  the wordmark drifts and changes colour at each edge, DVD-player style. A
+  the Windows flag icon drifts and shifts hue at each edge, DVD-player style. A
   click wakes from stand-by back to the same desktop; after Shut down it
   reloads the page, which boots again. Restart reloads straight away.
 

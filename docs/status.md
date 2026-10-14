@@ -2,7 +2,7 @@
 
 ## Done
 
-- **Interactive desktop ("Barathan 98").** Every icon works now. New: a window
+- **Interactive desktop.** Every icon works now. New: a window
   manager shared by all apps, a Start menu (Programs, Documents, Settings,
   Help, Run, Shut Down), a desktop context menu, wallpapers (Display
   Properties), My Documents with shortcuts to the TRACE Observatory, Craving

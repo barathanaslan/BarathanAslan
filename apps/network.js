@@ -492,7 +492,7 @@ WM.register('dos', {
         }
 
         function dir() {
-            print(' Volume in drive C is BARATHAN98');
+            print(' Volume in drive C has no label');
             print(' Directory of C:\\WINDOWS');
             print('');
             print('.              <DIR>        10-13-26  4:20p .');
@@ -537,7 +537,7 @@ WM.register('dos', {
                         break;
                     case 'ver':
                         print('');
-                        print('Barathan 98 [Version 4.10.1998]');
+                        print('Version 4.10.1998');
                         print('');
                         break;
                     case 'date':
@@ -550,10 +550,10 @@ WM.register('dos', {
                         print(args.join(' '));
                         break;
                     case 'whoami':
-                        print('barathan98\\visitor');
+                        print('visitor');
                         break;
                     case 'hostname':
-                        print('barathan98');
+                        print('desktop');
                         break;
                     case 'cd':
                     case 'chdir':
@@ -581,7 +581,7 @@ WM.register('dos', {
                     case 'ipconfig':
                     case 'winipcfg':
                         print('');
-                        print('Barathan 98 IP Configuration');
+                        print('IP Configuration');
                         print('');
                         print('        Not available.');
                         break;
@@ -632,7 +632,7 @@ WM.register('dos', {
         });
 
         print('');
-        print('Barathan 98 [Version 4.10.1998]');
+        print('MS-DOS Prompt [Version 4.10.1998]');
         print('Type HELP for a list of commands.');
         print('');
 

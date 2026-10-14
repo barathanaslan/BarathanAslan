@@ -139,15 +139,15 @@ function folderMenus(app, extraFile) {
     return [
         { label: 'File', items: () => [...(extraFile ? extraFile() : []), { label: 'Close', action: () => app.close() }] },
         { label: 'View', items: [{ label: 'Refresh', action: () => app.view && app.view.render() }] },
-        { label: 'Help', items: [{ label: 'About Barathan 98', action: aboutBarathan98 }] },
+        { label: 'Help', items: [{ label: 'About', action: aboutDesktop }] },
     ];
 }
 
-function aboutBarathan98() {
+function aboutDesktop() {
     WM.messageBox({
-        title: 'About Barathan 98',
+        title: 'About',
         icon: 'info',
-        text: ['Barathan 98', 'Window styles: 98.css by Jordan Scales.'],
+        text: 'Window styles: 98.css by Jordan Scales.',
     });
 }
 
@@ -724,7 +724,7 @@ WM.register('run', {
 
         body.appendChild(h('div', { class: 'run-intro' },
             h('img', { src: iconSrc('run', 32), alt: '', width: 32, height: 32 }),
-            h('p', null, 'Type the name of a program, folder, document, or Internet resource, and Barathan 98 will open it for you.')));
+            h('p', null, 'Type the name of a program, folder, document, or Internet resource to open it.')));
         body.appendChild(h('form', {
             class: 'run-form',
             onsubmit: e => {
@@ -762,17 +762,18 @@ function bootAgain() {
     window.location.reload();
 }
 
-// Stand-by and shut-down screen: the logo drifts across a black screen and
-// changes colour each time it bounces off an edge. A click or a key press
+// Stand-by and shut-down screen: the Windows flag drifts across a black
+// screen and shifts hue each time it bounces off an edge. A click or a key press
 // calls onWake.
-const BOUNCE_COLOURS = ['#ffffff', '#ff5555', '#55ff55', '#5599ff', '#ffff55', '#ff55ff', '#55ffff', '#ffaa33'];
+const BOUNCE_HUES = [0, 50, 100, 150, 200, 250, 300];
 
 function bounceScreen(onWake) {
-    const logo = h('div', { class: 'bounce-logo' }, h('b', null, 'Barathan'), '98');
+    const logo = h('img', { class: 'bounce-logo', src: iconSrc('windows', 32), alt: '', width: 32, height: 32 });
     const screen = powerScreen('bounce', logo);
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let colour = Math.floor(Math.random() * BOUNCE_COLOURS.length);
-    logo.style.color = BOUNCE_COLOURS[colour];
+    let colour = 0;
+    const tint = () => { logo.style.filter = `hue-rotate(${BOUNCE_HUES[colour]}deg)`; };
+    tint();
 
     let x = Math.random() * Math.max(0, screen.clientWidth - logo.offsetWidth);
     let y = Math.random() * Math.max(0, screen.clientHeight - logo.offsetHeight);
@@ -800,8 +801,8 @@ function bounceScreen(onWake) {
             bounced = true;
         }
         if (bounced) {
-            colour = (colour + 1 + Math.floor(Math.random() * (BOUNCE_COLOURS.length - 1))) % BOUNCE_COLOURS.length;
-            logo.style.color = BOUNCE_COLOURS[colour];
+            colour = (colour + 1 + Math.floor(Math.random() * (BOUNCE_HUES.length - 1))) % BOUNCE_HUES.length;
+            tint();
         }
         logo.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
         frame = requestAnimationFrame(step);
@@ -838,8 +839,8 @@ function shutDown(mode) {
         return;
     }
     powerScreen('shutting-down', h('div', null,
-        h('p', { class: 'shutting-down-title' }, h('b', null, 'Barathan'), '98'),
-        h('p', null, 'Barathan 98 is shutting down...')));
+        h('img', { class: 'shutting-down-logo', src: iconSrc('windows', 32), alt: '', width: 32, height: 32 }),
+        h('p', null, 'Shutting down...')));
     setTimeout(() => {
         if (mode === 'restart') {
             bootAgain();
@@ -850,7 +851,7 @@ function shutDown(mode) {
 }
 
 WM.register('shutdown', {
-    title: 'Shut Down Barathan 98',
+    title: 'Shut Down',
     dialog: true,
     className: 'shutdown-window',
     create(body, app) {

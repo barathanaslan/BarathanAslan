@@ -1,7 +1,7 @@
 'use strict';
 
 // ===========================================================================
-// Barathan 98 — the desktop shell.
+// The desktop shell.
 //
 // This file holds everything the apps share: DOM and storage helpers, Clippy,
 // popup menus, the window manager, desktop icons, the Start menu, the taskbar
@@ -717,7 +717,7 @@ const WM = (() => {
             const id = 'msgbox-' + (++dialogCount);
             let answer = null;
             register(id, {
-                title: title || 'Barathan 98',
+                title: title || 'Message',
                 dialog: true,
                 destroyOnClose: true,
                 className: 'message-box',
@@ -976,7 +976,7 @@ function toggleStartMenu() {
     startButton.classList.add('active');
     startButton.setAttribute('aria-expanded', 'true');
     const banner = h('div', { class: 'start-banner', 'aria-hidden': 'true' },
-        h('span', null, h('b', null, 'Barathan'), '98'));
+        h('img', { src: iconSrc('windows', 16), alt: '', width: 16, height: 16 }));
     Menus.open(startMenuItems, {
         anchor: startButton,
         above: true,
@@ -1483,7 +1483,7 @@ const Boot = (() => {
         icons.forEach(icon => icon.classList.add('pending'));
 
         // BIOS: version, memory test counting up, drives.
-        print('B98 BIOS v4.10\nCopyright (C) 1998\n\nMemory Test: ');
+        print('BIOS v4.10\nCopyright (C) 1998\n\nMemory Test: ');
         const memory = document.createTextNode('0K');
         bios.appendChild(memory);
         const TOTAL_KB = 65536;
@@ -1491,8 +1491,8 @@ const Boot = (() => {
             at(80 + step * 35, () => { memory.textContent = `${(TOTAL_KB * step) / 16}K${step === 16 ? ' OK' : ''}`; });
         }
         at(800, () => print('\n\nDetecting IDE drives...'));
-        at(1100, () => print('\n  Primary Master: BARATHAN98 C:'));
-        at(1450, () => print('\n\nStarting Barathan 98...'));
+        at(1100, () => print('\n  Primary Master: Hard Disk C:'));
+        at(1450, () => print('\n\nStarting...'));
 
         // Splash screen with the moving bar.
         at(1900, () => overlay.classList.add('splash'));

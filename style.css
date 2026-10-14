@@ -80,13 +80,10 @@ pre.boot-bios {
 }
 
 .boot-logo {
-    margin: 0 0 8vh;
-    font: italic 56px Arial, sans-serif;
-    text-shadow: 2px 3px rgba(0, 0, 0, 0.35);
-}
-
-.boot-logo b {
-    font-weight: 900;
+    width: 128px;
+    height: 128px;
+    margin-bottom: 8vh;
+    image-rendering: pixelated;
 }
 
 .boot-bar {
@@ -444,22 +441,10 @@ pre.boot-bios {
     overflow: hidden;
 }
 
-.start-banner span {
+.start-banner img {
     position: absolute;
-    left: 50%;
+    left: 3px;
     bottom: 6px;
-    transform: rotate(-90deg);
-    transform-origin: left bottom;
-    margin-left: 9px;
-    white-space: nowrap;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-}
-
-.start-banner b {
-    color: #fff;
-    font-weight: 900;
 }
 
 /* Menu bars inside windows */
@@ -1206,7 +1191,8 @@ pre.boot-bios {
 @media screen and (max-width: 700px) {
 
     .boot-logo {
-        font-size: 36px;
+        width: 96px;
+        height: 96px;
     }
 
     pre.boot-bios {

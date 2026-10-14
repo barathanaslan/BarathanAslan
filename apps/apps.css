@@ -528,13 +528,12 @@ table.props-table {
     font: 18px Arial, sans-serif;
 }
 
-.shutting-down-title {
-    font: italic 52px Arial, sans-serif;
-    margin-bottom: 22px !important;
-}
-
-.shutting-down-title b {
-    font-weight: 900;
+.shutting-down-logo {
+    display: block;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 24px;
+    image-rendering: pixelated;
 }
 
 .power-screen.bounce {
@@ -548,19 +547,17 @@ table.props-table {
     position: absolute;
     left: 0;
     top: 0;
-    font: italic 44px Arial, sans-serif;
-    white-space: nowrap;
+    width: 96px;
+    height: 96px;
+    image-rendering: pixelated;
     will-change: transform;
-}
-
-.bounce-logo b {
-    font-weight: 900;
 }
 
 @media screen and (max-width: 700px) {
 
     .bounce-logo {
-        font-size: 30px;
+        width: 64px;
+        height: 64px;
     }
 }
 
