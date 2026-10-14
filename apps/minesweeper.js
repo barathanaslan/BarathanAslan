@@ -136,7 +136,7 @@ WM.register('minesweeper', {
                             ],
                         }),
                     },
-                    { label: 'About Minesweeper', action: () => WM.messageBox({ title: 'About Minesweeper', icon: 'info', text: ['Minesweeper', 'Rebuilt from scratch for Barathan 98.'] }) },
+                    { label: 'About Minesweeper', action: () => WM.messageBox({ title: 'About Minesweeper', icon: 'info', text: 'Minesweeper' }) },
                 ],
             },
         ]));
@@ -338,7 +338,7 @@ WM.register('minesweeper', {
                 setTimeout(() => WM.messageBox({
                     title: 'Minesweeper', icon: 'info',
                     text: [`You have the fastest time for ${def().label.toLowerCase()} level: ${seconds} second${seconds === 1 ? '' : 's'}.`,
-                        'Saved in this browser. Well swept!'],
+                        'Saved in this browser.'],
                 }), 300);
             }
         }

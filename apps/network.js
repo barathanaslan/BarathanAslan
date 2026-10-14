@@ -19,19 +19,16 @@ const MACHINES = [
         id: 'barathans-mini',
         label: 'Mac mini',
         aliases: ['mini', 'mac-mini', 'macmini'],
-        role: 'My main machine, and always on. Code, data and anything that runs fine on a CPU live here.',
     },
     {
         id: 'barathans-5090',
-        label: 'The CUDA box',
+        label: 'Windows PC',
         aliases: ['5090', 'cuda', 'box', 'cuda-box', 'rtx5090'],
-        role: 'A Windows 11 PC with an RTX 5090. Training runs and big data live here.',
     },
     {
         id: 'barathans-macbook',
         label: 'MacBook',
         aliases: ['macbook', 'laptop'],
-        role: 'The screen and keyboard I carry around. It mostly talks to the mini.',
     },
 ];
 
@@ -201,15 +198,14 @@ WM.register('mycomputer', {
             title: 'My Computer',
             icon: 'my-computer',
             address: 'My Computer',
-            hint: 'Select a computer to see whether it is awake. Double-click it for its properties.',
+            hint: 'Select a computer to view its status.',
             status: () => {
                 const snap = MachineStatus.current();
                 if (!snap) return MachineStatus.failed() ? 'Status service unreachable' : 'Asking the status service...';
                 const age = formatAge(MachineStatus.reportAge(snap));
                 return MachineStatus.isStale(snap) ? `No report since ${age}` : `Last report ${age}`;
             },
-            footer: () => h('p', { class: 'folder-side-note' },
-                'The Mac mini reports through tailmon every two minutes. Your browser never talks to my computers directly.'),
+            footer: () => h('p', { class: 'folder-side-note' }, 'Updated every 2 minutes.'),
             menus: folderMenus(app, () => [
                 {
                     label: 'Ping',
@@ -229,7 +225,7 @@ WM.register('mycomputer', {
                     name: machine.id,
                     icon: 'computer',
                     badge: MachineStatus.stateOf(machine.id, snap),
-                    desc: `${machine.label}. ${machine.role}`,
+                    desc: machine.label,
                     status: machineSummary(machine, snap),
                     detail: () => machineDetail(machine, MachineStatus.current()),
                     open: () => openMachineProperties(machine),
@@ -274,7 +270,7 @@ function openMachineProperties(machine) {
                     panelBody.appendChild(h('div', { class: 'props-rule' }));
                     const rows = [
                         ['Status:', machineSummary(machine, snap)],
-                        ['Role:', machine.role],
+                        ['Type:', machine.label],
                         ['Hardware:', hardwareLine(host) || 'Not reported'],
                     ];
                     if (state === 'online' && host && host.status === 'live') rows.push(['Uptime:', formatUptime(host.uptime_h)]);
@@ -311,7 +307,6 @@ function openMachineProperties(machine) {
 // MS-DOS Prompt
 // ---------------------------------------------------------------------------
 const DOS_FILES = [
-    ['README', 'TXT', README_TEXT.length],
     ['CV', 'DOC', 48640],
     ['WINMINE', 'EXE', 24064],
     ['SOL', 'EXE', 59904],
@@ -370,8 +365,7 @@ WM.register('dos', {
                 print('Usage: ping [-n count] [-t] host');
                 print('');
                 print('Hosts on this network: ' + MACHINES.map(m => m.id).join(', '));
-                print('Replies are relayed by status.barathanaslan.com; your browser never');
-                print('contacts my computers directly.');
+                print('Replies are relayed by status.barathanaslan.com.');
                 return;
             }
             const lower = target.toLowerCase();
@@ -396,7 +390,7 @@ WM.register('dos', {
                     print('Reply from 127.0.0.1: bytes=32 time<1ms TTL=128');
                 }
                 finish('127.0.0.1', sent.length);
-                print('That is your own computer. It seems fine.');
+
                 return;
             }
             if (lower === 'barathanaslan.com' || lower === 'www.barathanaslan.com') {
@@ -406,7 +400,7 @@ WM.register('dos', {
                     if (i) await wait(1000);
                     if (cancelled) break;
                     sent.push(1);
-                    print(`Reply from ${lower}: you are already here.`);
+                    print(`Reply from ${lower}: bytes=32 time<1ms TTL=128`);
                 }
                 finish(lower, sent.length);
                 return;
@@ -514,8 +508,8 @@ WM.register('dos', {
         function help() {
             [
                 'Commands:',
-                '  PING host     ask whether one of my computers is awake (try: ping barathans-5090)',
-                '  TAILMON       status of all my computers',
+                '  PING host     check whether a host is awake (try: ping barathans-5090)',
+                '  TAILMON       status of all hosts',
                 '  DIR           list files          TYPE file     show a text file',
                 '  START prog    run a program (winmine, sol, notepad, iexplore...)',
                 '  CLS           clear the screen    VER           show the version',
@@ -569,8 +563,7 @@ WM.register('dos', {
                         dir();
                         break;
                     case 'type':
-                        if ((args[0] || '').toLowerCase() === 'readme.txt') README_TEXT.split('\n').forEach(print);
-                        else print(args[0] ? 'File not found - ' + args[0] : 'Required parameter missing');
+                        print(args[0] ? 'File not found - ' + args[0] : 'Required parameter missing');
                         break;
                     case 'ping':
                         await ping(args);
@@ -583,14 +576,14 @@ WM.register('dos', {
                     case 'deltree':
                     case 'erase':
                     case 'rd':
-                        print('Access denied. Nice try.');
+                        print('Access denied.');
                         break;
                     case 'ipconfig':
                     case 'winipcfg':
                         print('');
                         print('Barathan 98 IP Configuration');
                         print('');
-                        print('        This computer keeps its addresses to itself.');
+                        print('        Not available.');
                         break;
                     case 'exit':
                         if (app.el.classList.contains('dos-fullscreen')) {
@@ -640,7 +633,7 @@ WM.register('dos', {
 
         print('');
         print('Barathan 98 [Version 4.10.1998]');
-        print('(C)Copyright 1981-1998 Barathan Aslan. Type HELP for a list of commands.');
+        print('Type HELP for a list of commands.');
         print('');
 
         app.execute = command => {
@@ -669,8 +662,8 @@ WM.register('dos', {
 (() => {
     const tray = document.getElementById('taskbar-tray');
     const icon = h('img', {
-        class: 'tray-icon', src: iconSrc('network', 16), alt: 'My computers', width: 16, height: 16,
-        title: 'My computers',
+        class: 'tray-icon', src: iconSrc('network', 16), alt: 'Machines', width: 16, height: 16,
+        title: 'Machines',
         onclick: () => launch('mycomputer'),
     });
     tray.prepend(icon);

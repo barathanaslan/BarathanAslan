@@ -6,9 +6,8 @@
   manager shared by all apps, a Start menu (Programs, Documents, Settings,
   Help, Run, Shut Down), a desktop context menu, wallpapers (Display
   Properties), My Documents with shortcuts to the TRACE Observatory, Craving
-  Sugar, GitHub and more, an Internet Explorer home page, Notepad with
-  readme.txt, a Recycle Bin of jokes, an MS-DOS prompt, Minesweeper and
-  Solitaire. Plan and decisions: `plans/2026-10-13-interactive-desktop.md`.
+  Sugar, GitHub and more, an Internet Explorer links page, Notepad, a Recycle
+  Bin, an MS-DOS prompt, Minesweeper and Solitaire. Plan and decisions: `plans/2026-10-13-interactive-desktop.md`.
 - **Live machine status.** `status.barathanaslan.com` (Worker
   `barathan98-status` + KV) receives a sanitised `tailmon json` summary from
   the Mac mini every 2 minutes (launchd `com.barathan.barathan98-status`).
@@ -32,6 +31,11 @@
   unbounded z-index, status that never aged when fetches failed, timers that
   outlived a game, a missing 16px Minesweeper icon, Worker forgetting
   hardware/last-seen for absent hosts...). All fixed and re-tested.
+
+- 2026-10-14: removed all first-person / self-describing copy at Barathan's
+  request (readme.txt, Clippy's welcome, the IE home-page parody, invented
+  Recycle Bin jokes, machine "role" blurbs). Meta descriptions now use the CV's
+  profile sentence. See the copy rule in `overview.md`.
 
 ## Open items
 

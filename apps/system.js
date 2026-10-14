@@ -5,41 +5,37 @@
 // Notepad, Display Properties, Run and Shut Down.
 // ===========================================================================
 
-// Places worth a visit. My Documents, Internet Explorer and the Start menu
-// all read from this list.
+// Outside links, shown in My Documents and Internet Explorer. Descriptions are
+// taken from the CV or from each site's own description, nothing more.
 const LINKS = [
     {
         id: 'observatory', name: 'TRACE Observatory', url: 'https://observatory.barathanaslan.com',
-        desc: 'Earthquakes solved by several models on one map, with their focal mechanisms. ' +
-            'The research project I work on: TRACE, at Kandilli Observatory, Boğaziçi University.',
+        desc: 'Earthquakes solved by several models on one map, with their focal mechanisms.',
     },
     {
         id: 'blog', name: 'Craving Sugar', url: 'https://presser.ink/@barathan/craving-sugar',
-        desc: 'My blog on Presser. On fruit flies, Millennium Problems, and what makes a stranger feel familiar.',
+        desc: 'On fruit flies, Millennium Problems, and what makes a stranger feel familiar.',
     },
     {
         id: 'github', name: 'GitHub', url: 'https://github.com/barathanaslan',
-        desc: 'Internship projects and personal projects.',
+        desc: 'Internship Projects & Personal Projects',
     },
     {
         id: 'tailmon', name: 'tailmon', url: 'https://github.com/barathanaslan/tailmon',
-        desc: 'A tailnet-wide resource monitor in one Go binary. It is also how this desktop knows which of my computers are awake.',
+        desc: 'Tailnet-wide resource monitor: one Go binary; TUI + JSON agents for every machine (macOS/Windows/Linux, GPU-aware).',
     },
     {
         id: 'whisper', name: 'phonetic-whisper-mlx', url: 'https://github.com/barathanaslan/phonetic-whisper-mlx',
         desc: 'Whisper-decoder fine-tunes for IPA transcription on Apple Silicon (MLX).',
     },
-    {
-        id: 'linkedin', name: 'LinkedIn', url: 'https://www.linkedin.com/in/barathanaslan/',
-        desc: 'The professional version of this desktop.',
-    },
+    { id: 'linkedin', name: 'LinkedIn', url: 'https://www.linkedin.com/in/barathanaslan/' },
     {
         id: 'kaggle', name: 'Kaggle', url: 'https://www.kaggle.com/barathanaslan',
-        desc: 'Competitions, dataset creation and ML models.',
+        desc: 'Competitions, Dataset Creation, ML Models',
     },
     {
         id: 'huggingface', name: 'Hugging Face', url: 'https://huggingface.co/barathanasln',
-        desc: 'Language and image models, and synthetic data.',
+        desc: 'Work On Various Language & Image Models, Synthetic Data Creation',
     },
 ];
 
@@ -151,11 +147,7 @@ function aboutBarathan98() {
     WM.messageBox({
         title: 'About Barathan 98',
         icon: 'info',
-        text: [
-            'Barathan 98',
-            'A Windows 98 desktop in hand-written HTML, CSS and JavaScript. No frameworks, no trackers.',
-            'Styles from 98.css by Jordan Scales. Everything else by Barathan Aslan.',
-        ],
+        text: ['Barathan 98', 'Window styles: 98.css by Jordan Scales.'],
     });
 }
 
@@ -172,13 +164,8 @@ WM.register('mydocuments', {
         const documents = [
             {
                 name: 'CV - Barathan Aslan.doc', icon: 'document',
-                desc: 'My CV. There is a PDF download inside the document.',
+                desc: 'Includes a PDF download.',
                 open: () => launch('cv'),
-            },
-            {
-                name: 'readme.txt', icon: 'text-file',
-                desc: 'Who I am, where to look and what to try on this desktop.',
-                open: () => launch('notepad', { file: 'readme.txt' }),
             },
         ];
         app.view = FolderView(body, app, {
@@ -204,32 +191,17 @@ WM.register('mydocuments', {
 const RECYCLED = [
     {
         name: "Barathan'sMacStudio", icon: 'computer',
-        desc: 'Retired. Its work now runs on barathans-mini and barathans-5090.',
-        restore: 'This computer has been retired. It is happier where it is.',
+        desc: 'Replaced by barathans-mini.',
+        restore: "Barathan'sMacStudio cannot be restored.",
     },
     {
         name: 'BarathanNeedsRAMforCudaSetup', icon: 'computer',
-        desc: 'Got the RAM. Now lives in My Computer as barathans-5090.',
-        restore: 'No need: the RAM arrived. Look for barathans-5090 in My Computer.',
-    },
-    {
-        name: 'sleep_schedule.txt', icon: 'text-file',
-        desc: 'Deleted during finals week.',
-        restore: 'sleep_schedule.txt is corrupted and cannot be restored.',
-    },
-    {
-        name: 'final_v3_REAL_final.ipynb', icon: 'notebook',
-        desc: 'Superseded by final_v4.ipynb.',
-        restore: 'A newer version of this file (final_v4.ipynb) already exists.',
-    },
-    {
-        name: 'model_that_overfit.pt', icon: 'notebook',
-        desc: 'Training accuracy: 100%. Validation accuracy: let’s not talk about it.',
-        restore: 'Restoring this model would only make it memorise the Recycle Bin.',
+        desc: 'Now barathans-5090, in My Computer.',
+        restore: 'BarathanNeedsRAMforCudaSetup cannot be restored. See barathans-5090 in My Computer.',
     },
     {
         name: 'Clippy.exe', icon: 'help', permanent: true,
-        desc: 'The Office Assistant. Deleted many times.',
+        desc: 'The Office Assistant.',
     },
 ];
 
@@ -242,7 +214,7 @@ function updateRecycleBinIcon() {
 
 function restoreRecycled(item) {
     if (item.permanent) {
-        showClippy("You can't get rid of me that easily.", 'I live in the Recycle Bin now. It is quite cosy.');
+        WM.messageBox({ title: 'Recycle Bin', icon: 'error', text: 'Clippy.exe cannot be restored: it is in use.' });
         return;
     }
     WM.messageBox({ title: 'Recycle Bin', icon: 'info', text: item.restore });
@@ -251,7 +223,7 @@ function restoreRecycled(item) {
 function emptyRecycleBin() {
     const deletable = recycleBinItems.filter(item => !item.permanent);
     if (!deletable.length) {
-        showClippy('Still here.', 'Clippy.exe is in use and cannot be deleted.');
+        WM.messageBox({ title: 'Recycle Bin', icon: 'error', text: 'Clippy.exe cannot be deleted: it is in use.' });
         return;
     }
     WM.messageBox({
@@ -265,7 +237,7 @@ function emptyRecycleBin() {
         updateRecycleBinIcon();
         const app = WM.get('recyclebin');
         if (app && app.view) app.view.render();
-        setTimeout(() => showClippy('Clippy.exe could not be deleted: it is in use.', 'By me.'), 400);
+        setTimeout(() => WM.messageBox({ title: 'Recycle Bin', icon: 'error', text: 'Clippy.exe cannot be deleted: it is in use.' }), 300);
     });
 }
 
@@ -296,11 +268,11 @@ WM.register('recyclebin', {
 });
 
 // ---------------------------------------------------------------------------
-// Internet Explorer — a home page of links. Real sites open in a new tab:
-// most of them (GitHub, the Observatory) refuse to be framed by another site.
+// Internet Explorer — a page of links. Real sites open in a new tab: most of
+// them (GitHub, the Observatory) refuse to be framed by another site.
 // ---------------------------------------------------------------------------
 WM.register('ie', {
-    title: "Barathan's Home Page - Microsoft Internet Explorer",
+    title: 'Links - Microsoft Internet Explorer',
     icon: 'ie',
     className: 'ie-window',
     width: 720,
@@ -324,7 +296,7 @@ WM.register('ie', {
             },
             {
                 label: 'Favorites', items: () => [
-                    { label: "Barathan's Home Page", icon: 'web-page', action: () => navigate('about:home') },
+                    { label: 'Links', icon: 'web-page', action: () => navigate('about:home') },
                     { separator: true },
                     ...LINKS.map(link => ({ label: link.name, icon: 'internet', action: () => navigate(link.url) })),
                 ],
@@ -335,8 +307,7 @@ WM.register('ie', {
                         label: 'About Internet Explorer', action: () => WM.messageBox({
                             title: 'About Internet Explorer',
                             icon: 'info',
-                            text: ['Microsoft Internet Explorer, more or less.',
-                                'Most of the web refuses to load inside another site, so pages open in a new window, the way pop-ups used to.'],
+                            text: ['Internet Explorer', 'Pages open in a new window.'],
                         }),
                     },
                 ],
@@ -392,7 +363,7 @@ WM.register('ie', {
             page.textContent = '';
             page.scrollTop = 0;
             if (url === 'about:home') {
-                app.setTitle("Barathan's Home Page - Microsoft Internet Explorer");
+                app.setTitle('Links - Microsoft Internet Explorer');
                 page.appendChild(homePage(navigate));
                 status.textContent = 'Done';
                 return;
@@ -407,10 +378,9 @@ WM.register('ie', {
             }
             app.setTitle('Cannot find server - Microsoft Internet Explorer');
             page.appendChild(h('div', { class: 'ie-content' },
-                h('h1', { class: 'ie-error-title' }, 'The page cannot be displayed'),
-                h('p', null, `"${url}" is not something this browser understands.`),
-                h('p', null, 'Try a web address, like barathanaslan.com, or go back to the ',
-                    h('a', { href: '#', onclick: e => { e.preventDefault(); navigate('about:home'); } }, 'home page'), '.')));
+                h('h1', { class: 'ie-title' }, 'The page cannot be displayed'),
+                h('p', null, `Cannot open "${url}". Go back to `,
+                    h('a', { href: '#', onclick: e => { e.preventDefault(); navigate('about:home'); } }, 'Links'), '.')));
             status.textContent = 'Done';
         }
 
@@ -423,23 +393,8 @@ WM.register('ie', {
 });
 
 function homePage(navigate) {
-    const appLink = (label, id, args) => h('a', {
-        href: '#',
-        onclick: e => {
-            e.preventDefault();
-            launch(id, args);
-        },
-    }, label);
-
-    return h('div', { class: 'ie-content home-page' },
-        h('div', { class: 'home-banner' },
-            h('h1', null, "Welcome to Barathan's Home Page!"),
-            h('div', { class: 'marquee', 'aria-hidden': 'true' },
-                h('span', null, '★ Now: Research Assistant at TRACE, tracing earthquakes at Kandilli Observatory ★ ' +
-                    'New on this site: Minesweeper, Solitaire and a live ping to my computers ★'))),
-        h('p', null, "Hi! I'm Barathan, a Computer Engineering student at Boğaziçi University. " +
-            'I like pattern recognition and prediction, and I apply it wherever I can: ML and LLM models, earthquakes, markets.'),
-        h('h2', null, 'Cool Links'),
+    return h('div', { class: 'ie-content' },
+        h('h1', { class: 'ie-title' }, 'Links'),
         h('ul', { class: 'home-links' },
             LINKS.map(link => h('li', null,
                 h('a', {
@@ -449,70 +404,19 @@ function homePage(navigate) {
                         navigate(link.url);
                     },
                 }, link.name),
-                ' — ', link.desc))),
-        h('h2', null, 'Things To Do On This Computer'),
-        h('ul', { class: 'home-links' },
-            h('li', null, appLink('Play Minesweeper', 'minesweeper'), ' — the first click is always safe.'),
-            h('li', null, appLink('Play Solitaire', 'solitaire'), ' — Klondike, draw one or draw three.'),
-            h('li', null, appLink('Ping my computers', 'dos', { run: 'ping barathans-5090' }), ' — live status, relayed safely.'),
-            h('li', null, appLink('Read my CV', 'cv'), ' or ', appLink('send me mail', 'mail'), '.')),
-        h('div', { class: 'under-construction' }, h('span', null, 'UNDER CONSTRUCTION')),
-        h('p', { class: 'home-footer' },
-            'Best viewed with Internet Explorer 4.0 at 800 × 600.', h('br'),
-            '© 1998–2026 Barathan Aslan'));
+                link.desc ? [' — ', link.desc] : null))));
 }
 
 function newWindowPage(url, link) {
     return h('div', { class: 'ie-content' },
-        h('h1', { class: 'ie-error-title' }, link ? link.name : 'Opening page...'),
-        link ? h('p', null, link.desc) : null,
-        h('p', null, 'This page opened in a new window. Most sites will not load inside someone else’s page, so this browser hands them to yours.'),
-        h('p', null, 'If nothing happened, ', h('a', { href: url, target: '_blank', rel: 'noopener' }, 'click here'), '.'));
+        h('h1', { class: 'ie-title' }, link ? link.name : url),
+        h('p', null, 'This page opened in a new window. If nothing happened, ',
+            h('a', { href: url, target: '_blank', rel: 'noopener' }, 'click here'), '.'));
 }
 
 // ---------------------------------------------------------------------------
-// Notepad
-//
-// readme.txt ships with the site. A visitor may edit and save it; the saved
-// copy lives in their browser only and is dropped if the original changes.
-// "Untitled" is a scratch pad that saves itself as you type.
+// Notepad — one Untitled document that saves itself (in this browser only).
 // ---------------------------------------------------------------------------
-const README_TEXT = `readme.txt
-==========
-
-Hi, I'm Barathan.
-
-I'm a senior Computer Engineering student at Boğaziçi University and a
-research assistant on TRACE (Türkiye Real-time AI Catalog for Earthquake
-Monitoring & Early Warning) at Kandilli Observatory, supported by
-Google.org. In short: I trace earthquakes.
-
-Before that I was an associate data scientist at Pegasus, and an intern
-at Fimple and at Doping Technology.
-
-
-WHERE TO LOOK
--------------
-  CV - Barathan Aslan.doc   my CV, on the desktop
-  TRACE Observatory         earthquakes solved by several models on one map
-  Craving Sugar             my blog
-  My Documents              shortcuts to all of the above, and to GitHub
-
-
-THINGS TO TRY
--------------
-  * Double-click My Computer to see which of my computers are awake.
-  * Start > Run..., then type:  ping barathans-5090
-  * Start > Programs > Games. The first Minesweeper click is always safe.
-  * Right-click the desktop > Properties to change the wallpaper.
-
-You can edit this file. Your changes stay in your own browser.
-
-Say hi: Send Mail on the desktop, or barathanasln@gmail.com
-`;
-
-const NOTEPAD_FILES = { 'readme.txt': README_TEXT };
-
 WM.register('notepad', {
     title: 'Untitled - Notepad',
     icon: 'notepad',
@@ -520,109 +424,53 @@ WM.register('notepad', {
     width: 600,
     height: 440,
     create(body, app) {
-        const state = { file: null, saved: '', wrap: store.get('notepad.wrap', true) };
+        let wrap = store.get('notepad.wrap', true);
         const text = h('textarea', { class: 'notepad-text', spellcheck: 'false', 'aria-label': 'Document' });
+        text.value = store.get('notepad.untitled', '');
 
-        const savedCopyKey = file => 'notepad.copy.' + file;
+        let saveTimer;
+        const save = () => {
+            clearTimeout(saveTimer);
+            store.set('notepad.untitled', text.value);
+        };
+        text.addEventListener('input', () => {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(save, 400);
+        });
 
-        function load(file) {
-            if (file && NOTEPAD_FILES[file] !== undefined) {
-                state.file = file;
-                const copy = store.get(savedCopyKey(file), null);
-                text.value = copy && copy.orig === NOTEPAD_FILES[file] ? copy.text : NOTEPAD_FILES[file];
-            } else {
-                state.file = null;
-                text.value = store.get('notepad.untitled', '');
-            }
-            state.saved = text.value;
-            text.scrollTop = 0;
-            text.setSelectionRange(0, 0);
-            app.setTitle(`${state.file || 'Untitled'} - Notepad`);
-        }
-
-        function save() {
-            if (state.file) {
-                store.set(savedCopyKey(state.file), { orig: NOTEPAD_FILES[state.file], text: text.value });
-            } else {
-                store.set('notepad.untitled', text.value);
-            }
-            state.saved = text.value;
-        }
-
-        function revert() {
-            if (!state.file) return;
-            store.remove(savedCopyKey(state.file));
-            load(state.file);
-        }
-
-        // Resolves true when it is fine to drop the current text.
-        function confirmDiscard() {
-            if (!state.file || text.value === state.saved) return Promise.resolve(true);
-            return WM.messageBox({
-                title: 'Notepad',
-                icon: 'warning',
-                text: `The text in the ${state.file} file has changed. Do you want to save the changes?`,
-                buttons: ['Yes', 'No', 'Cancel'],
+        function newDocument() {
+            const clear = () => {
+                text.value = '';
+                save();
+                text.focus();
+            };
+            if (!text.value) return clear();
+            WM.messageBox({
+                title: 'Notepad', icon: 'warning',
+                text: 'Clear the current text?',
+                buttons: ['Yes', 'No'],
             }).then(answer => {
-                if (answer === 'Yes') save();
-                return answer === 'Yes' || answer === 'No';
+                if (answer === 'Yes') clear();
             });
         }
-
-        app.openFile = file => {
-            // Opening the file that is already open keeps any unsaved edits.
-            if (file && file === state.file) return Promise.resolve();
-            return confirmDiscard().then(ok => {
-                if (!ok) return;
-                flushDraft();
-                load(file);
-            });
-        };
-        app.confirmDiscard = confirmDiscard;
-        // Closing without saving ("No") drops the edits.
-        app.discardEdits = () => {
-            flushDraft();
-            text.value = state.saved;
-        };
 
         function applyWrap() {
-            text.classList.toggle('nowrap', !state.wrap);
-            text.setAttribute('wrap', state.wrap ? 'soft' : 'off');
+            text.classList.toggle('nowrap', !wrap);
+            text.setAttribute('wrap', wrap ? 'soft' : 'off');
         }
-
-        let draftTimer;
-        // The Untitled draft saves itself shortly after typing stops; write
-        // it now before switching away, so it never lands in another file.
-        function flushDraft() {
-            if (!draftTimer) return;
-            clearTimeout(draftTimer);
-            draftTimer = null;
-            if (!state.file) save();
-        }
-        text.addEventListener('input', () => {
-            if (state.file) return;
-            clearTimeout(draftTimer);
-            draftTimer = setTimeout(save, 400);
-        });
 
         function insertTimeDate() {
             const now = new Date();
             const stamp = `${now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} ${now.toLocaleDateString()}`;
             text.setRangeText(stamp, text.selectionStart, text.selectionEnd, 'end');
             text.focus();
+            save();
         }
 
         body.appendChild(menubar([
             {
-                label: 'File', items: () => [
-                    { label: 'New', action: () => app.openFile(null) },
-                    { label: 'Open readme.txt', action: () => app.openFile('readme.txt') },
-                    { label: 'Save', shortcut: 'Ctrl+S', action: save },
-                    {
-                        label: 'Revert to Original',
-                        disabled: () => !state.file || store.get(savedCopyKey(state.file), null) === null,
-                        action: revert,
-                    },
+                label: 'File', items: [
+                    { label: 'New', action: newDocument },
                     { separator: true },
                     { label: 'Exit', action: () => app.close() },
                 ],
@@ -636,9 +484,9 @@ WM.register('notepad', {
             {
                 label: 'Format', items: () => [
                     {
-                        label: 'Word Wrap', checked: state.wrap, action: () => {
-                            state.wrap = !state.wrap;
-                            store.set('notepad.wrap', state.wrap);
+                        label: 'Word Wrap', checked: wrap, action: () => {
+                            wrap = !wrap;
+                            store.set('notepad.wrap', wrap);
                             applyWrap();
                         },
                     },
@@ -649,7 +497,7 @@ WM.register('notepad', {
                     {
                         label: 'About Notepad', action: () => WM.messageBox({
                             title: 'About Notepad', icon: 'info',
-                            text: ['Notepad', 'Whatever you save here stays in your browser. Nothing is sent anywhere.'],
+                            text: ['Notepad', 'Text is kept in this browser only.'],
                         }),
                     },
                 ],
@@ -668,14 +516,14 @@ WM.register('notepad', {
         });
 
         applyWrap();
-        load('readme.txt');
+        app.focusText = () => text.focus();
+        app.save = save;
     },
     onOpen(args, app) {
-        if ('file' in args) app.openFile(args.file);
+        setTimeout(app.focusText, 0);
     },
-    beforeClose: app => app.confirmDiscard(),
     onClose(app) {
-        app.discardEdits();
+        app.save();
     },
 });
 
@@ -793,8 +641,6 @@ WM.register('display', {
 // ---------------------------------------------------------------------------
 const RUN_COMMANDS = {
     notepad: () => launch('notepad'),
-    'readme.txt': () => launch('notepad', { file: 'readme.txt' }),
-    readme: () => launch('notepad', { file: 'readme.txt' }),
     winmine: () => launch('minesweeper'),
     minesweeper: () => launch('minesweeper'),
     sol: () => launch('solitaire'),
@@ -982,7 +828,7 @@ WM.register('shutdown', {
                 h('button', { type: 'button', onclick: () => app.close() }, 'Cancel'),
                 h('button', {
                     type: 'button',
-                    onclick: () => showClippy('Shutting down only turns off this page.', 'My real computers stay on. Promise.'),
+                    onclick: () => WM.messageBox({ title: 'Shut Down', icon: 'info', text: 'Shut Down only closes this page.' }),
                 }, 'Help')));
         body.appendChild(form);
     },

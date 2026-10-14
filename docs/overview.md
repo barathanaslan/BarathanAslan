@@ -3,7 +3,12 @@
 A Windows 98 desktop ("Barathan 98") that presents Barathan Aslan's CV, with
 working apps around it: folders of links, Internet Explorer, Notepad, an
 MS-DOS prompt, Minesweeper, Solitaire, wallpapers, and a live view of which of
-Barathan's computers are awake. Static site, no build step, served by GitHub
+Barathan's computers are awake.
+
+**Copy rule (Barathan's call, 2026-10-14):** no first-person or
+self-describing text anywhere on the site. Link descriptions come from the CV
+or from the linked site's own description; interface text stays neutral, as
+in Windows. Don't add "about me" blurbs, taglines or jokes in Barathan's voice. Static site, no build step, served by GitHub
 Pages from `main` at the apex domain `barathanaslan.com`. The live machine
 status comes from a small Cloudflare Worker (`status/`).
 
@@ -13,7 +18,7 @@ status comes from a small Cloudflare Worker (`status/`).
 |---|---|
 | `index.html` | Markup for the desktop icons, the two windows that need real HTML (CV, Send Mail) and the taskbar. Every other window is built by its app script. `.cv-content` ships empty and is filled at runtime. |
 | `app.js` | The shell: helpers (`h()`, `store`), Clippy, popup menus (`Menus`, `menubar()`), the window manager (`WM`), desktop icons and context menu, Start menu, clock, `Wallpaper`, and the `cv.json` renderer. Boot sequence at the end. |
-| `apps/system.js` | `LINKS` (the outside sites), `FolderView` (Explorer-style windows), My Documents, Recycle Bin, Internet Explorer, Notepad, Display Properties, Run, Shut Down. |
+| `apps/system.js` | `LINKS` (the outside sites), `FolderView` (Explorer-style windows), My Documents, Recycle Bin, Internet Explorer (a Links page), Notepad (one Untitled document), Display Properties, Run, Shut Down. |
 | `apps/network.js` | `MACHINES`, the status client (`MachineStatus`), My Computer, machine Properties, the MS-DOS Prompt (`ping`, `tailmon`, `dir`...), the tray icon. |
 | `apps/minesweeper.js`, `apps/solitaire.js` | The games, written from scratch. Graphics are CSS and inline SVG (canvas for the Solitaire finale). |
 | `apps/apps.css` | Styles for everything in `apps/`. `style.css` keeps the shell, CV, mail, print and Clippy styles. |
@@ -27,8 +32,8 @@ status comes from a small Cloudflare Worker (`status/`).
 | `CNAME` | `barathanaslan.com` — binds the Pages site to the apex domain. |
 
 Scripts load with `defer` in this order: `app.js`, then `apps/*.js`. The apps
-use globals from `app.js`; `network.js` also uses `FolderView`, `README_TEXT`
-and `runCommand` from `system.js`.
+use globals from `app.js`; `network.js` also uses `FolderView` and
+`runCommand` from `system.js`.
 
 No dependencies are fetched at runtime and every asset is same-origin, except
 the status JSON from `status.barathanaslan.com`. The webfonts must stay next to
@@ -79,10 +84,9 @@ optional `data-file`) or `data-href="<url>"`. No JS change is needed to add one.
 ### Visitor state
 
 Everything a visitor changes stays in their own browser (`localStorage`, keys
-prefixed `b98.`, every access wrapped by `store`): wallpaper, the edited copy of
-readme.txt and the Untitled note, Minesweeper level and best times, Solitaire
-draw mode, the Run box's last command, and whether Clippy has said hello.
-A saved readme.txt copy is dropped automatically when the original changes.
+prefixed `b98.`, every access wrapped by `store`): wallpaper, the Notepad
+text, Minesweeper level and best times, Solitaire draw mode, and the Run box's
+last command.
 
 ### Wallpapers
 
@@ -103,9 +107,9 @@ and friends.
 
 ### Editing the other content
 
-- Links (My Documents, IE favourites, IE home page): `LINKS` in `apps/system.js`.
-- readme.txt: `README_TEXT` in `apps/system.js`.
-- Recycle Bin jokes: `RECYCLED` in `apps/system.js`.
+- Links (My Documents, IE): `LINKS` in `apps/system.js`.
+- Recycle Bin: `RECYCLED` in `apps/system.js`.
+- Clippy's Start → Help tips: `HELP_TIPS` in `app.js`.
 - Machines in My Computer: `MACHINES` in `apps/network.js`, and `HOSTS` in
   both `status/worker/src/index.js` and `status/reporter/report.py`.
 

@@ -74,7 +74,7 @@ WM.register('solitaire', {
                             ],
                         }),
                     },
-                    { label: 'About Solitaire', action: () => WM.messageBox({ title: 'About Solitaire', icon: 'info', text: ['Solitaire', 'Rebuilt from scratch for Barathan 98.'] }) },
+                    { label: 'About Solitaire', action: () => WM.messageBox({ title: 'About Solitaire', icon: 'info', text: 'Solitaire' }) },
                 ],
             },
         ]));

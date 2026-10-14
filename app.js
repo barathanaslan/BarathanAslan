@@ -899,7 +899,7 @@ document.getElementById('desktop').addEventListener('contextmenu', e => {
         { separator: true },
         { label: 'Refresh', action: refreshDesktop },
         { separator: true },
-        { label: 'New', submenu: [{ label: 'Text Document', icon: 'text-file', action: () => launch('notepad', { file: null }) }] },
+        { label: 'New', submenu: [{ label: 'Text Document', icon: 'text-file', action: () => launch('notepad') }] },
         { separator: true },
         { label: 'Properties', action: () => launch('display') },
     ], { x: e.clientX, y: e.clientY, iconColumn: false });
@@ -951,7 +951,6 @@ function startMenuItems() {
         {
             label: 'Documents', icon: 'my-documents', submenu: [
                 { label: 'CV - Barathan Aslan.doc', icon: 'document', action: () => launch('cv') },
-                { label: 'readme.txt', icon: 'text-file', action: () => launch('notepad', { file: 'readme.txt' }) },
                 { label: 'Craving Sugar', icon: 'internet', action: () => openLink('https://presser.ink/@barathan/craving-sugar') },
                 { separator: true },
                 { label: 'My Documents', icon: 'my-documents', action: () => launch('mydocuments') },
@@ -995,12 +994,11 @@ function toggleStartMenu() {
 startButton.addEventListener('click', toggleStartMenu);
 
 const HELP_TIPS = [
-    ['Double-click My Computer to see which of my machines are awake right now.'],
-    ['Open Start → Run... and type "ping barathans-5090".', 'Or try "winmine", "sol" or "command".'],
-    ['Right-click the desktop and choose Properties to change the wallpaper.'],
-    ['Minesweeper: the first click is always safe.', 'On a phone, press and hold a square to flag it.'],
-    ['Solitaire: tap a card and it jumps to the best place it can go.'],
-    ['My Documents has shortcuts to the TRACE Observatory and my blog.'],
+    ['My Computer shows which machines are awake.'],
+    ['Start → Run: try "ping barathans-5090", "winmine" or "sol".'],
+    ['Right-click the desktop → Properties to change the wallpaper.'],
+    ['Minesweeper: the first click is always safe.', 'On a touch screen, press and hold to flag.'],
+    ['Solitaire: click a card to move it to the best place it can go.'],
 ];
 let helpTipIndex = 0;
 
@@ -1451,12 +1449,5 @@ window.addEventListener('load', () => {
     WM.open('cv');
     cvLoaded.then(() => {
         document.querySelector('.screen-layout').classList.add('ready');
-        // First visit only: point out that the desktop is more than a frame.
-        if (!store.get('greeted', false)) {
-            store.set('greeted', true);
-            setTimeout(() => showClippy(
-                'Welcome! Everything on this desktop works — try the Start menu.',
-                'There is Minesweeper, Solitaire, and a live ping to my computers.'), 2500);
-        }
     });
 });
