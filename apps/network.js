@@ -185,15 +185,156 @@ function machineDetail(machine, snap) {
 }
 
 // ---------------------------------------------------------------------------
-// My Computer
+// My Computer: a schematic of how the machines and their hardware connect.
+// Solid lines are cables, dashed lines are connections over the network.
 // ---------------------------------------------------------------------------
+const HARDWARE = [
+    {
+        key: 'disk',
+        name: 'WD Elements (D:)',
+        icon: 'hard-disk',
+        desc: 'External hard disk, 18 TB',
+        lines: ['Drive D: of barathans-5090, on USB at 10 Gbps.', 'macOS reaches it over the network.'],
+    },
+    {
+        key: 'nic',
+        name: 'TX401',
+        icon: 'network-card',
+        desc: '10 Gigabit Ethernet card',
+        lines: ['TP-Link TX401, a PCIe card in barathans-5090.', 'A Gigabit Ethernet cable runs from it to barathans-mini.'],
+    },
+];
+
+// Node and link positions, as fractions of the schematic's width and height.
+// `wide` lays the chain out left to right; `tall` (narrow windows, phones)
+// top to bottom. Links name their ends by node key; `via` adds corners.
+const SCHEMATIC = {
+    nodes: {
+        disk: { wide: [0.12, 0.45], tall: [0.56, 0.08] },
+        pc: { wide: [0.37, 0.45], tall: [0.56, 0.35] },
+        nic: { wide: [0.61, 0.45], tall: [0.56, 0.6] },
+        mini: { wide: [0.87, 0.45], tall: [0.56, 0.86] },
+        macbook: { wide: [0.87, 0.85], tall: [0.88, 0.86] },
+    },
+    links: [
+        { from: 'pc', to: 'disk', label: 'USB 10 Gbps' },
+        { from: 'pc', to: 'nic', label: 'PCIe' },
+        { from: 'nic', to: 'mini', label: 'Gigabit Ethernet', heavy: true },
+        {
+            from: 'mini', to: 'disk', label: 'D: over the network', dashed: true,
+            via: { wide: [[0.87, 0.1], [0.12, 0.1]], tall: [[0.17, 0.86], [0.17, 0.08]] },
+        },
+        { from: 'macbook', to: 'mini', label: 'Over the network', dashed: true },
+    ],
+};
+
+const MACHINE_NODE = { 'barathans-5090': 'pc', 'barathans-mini': 'mini', 'barathans-macbook': 'macbook' };
+
+// How far a line stops short of a node's centre, so it meets the icon's edge
+// and never runs through the name printed under it.
+function nodeClearance(dx, dy) {
+    if (Math.abs(dx) >= Math.abs(dy)) return 26;
+    return dy > 0 ? 48 : 22;
+}
+
+let schematicObserver = null;
+
+function buildSchematic(items, itemElement) {
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const root = h('div', { class: 'schematic' });
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'schematic-lines');
+    svg.setAttribute('aria-hidden', 'true');
+    root.appendChild(svg);
+
+    const nodes = {};
+    items.forEach(item => {
+        const key = item.node;
+        const el = itemElement(item);
+        el.classList.add('schematic-node');
+        root.appendChild(el);
+        nodes[key] = el;
+    });
+    const labels = SCHEMATIC.links.map(link => {
+        const label = h('span', { class: 'schematic-label' + (link.dashed ? ' dashed' : '') }, link.label);
+        root.appendChild(label);
+        return label;
+    });
+
+    function layout() {
+        const width = root.clientWidth;
+        const height = root.clientHeight;
+        if (!width || !height) return;
+        const shape = width < 420 ? 'tall' : 'wide';
+        root.classList.toggle('tall', shape === 'tall');
+        const point = ([x, y]) => [x * width, y * height];
+        const centre = key => point(SCHEMATIC.nodes[key][shape]);
+
+        Object.keys(nodes).forEach(key => {
+            const [x, y] = centre(key);
+            nodes[key].style.left = `${Math.round(x)}px`;
+            nodes[key].style.top = `${Math.round(y)}px`;
+        });
+
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        svg.textContent = '';
+        SCHEMATIC.links.forEach((link, i) => {
+            const pts = [centre(link.from), ...((link.via && link.via[shape]) || []).map(point), centre(link.to)];
+            // Pull both ends back from their nodes.
+            const trim = (a, b) => {
+                const dx = b[0] - a[0];
+                const dy = b[1] - a[1];
+                const len = Math.hypot(dx, dy) || 1;
+                const d = Math.min(nodeClearance(dx, dy), len / 2);
+                return [a[0] + dx / len * d, a[1] + dy / len * d];
+            };
+            pts[0] = trim(pts[0], pts[1]);
+            const n = pts.length - 1;
+            pts[n] = trim(pts[n], pts[n - 1]);
+
+            const line = document.createElementNS(svgNS, 'polyline');
+            line.setAttribute('points', pts.map(p => p.map(Math.round).join(',')).join(' '));
+            line.setAttribute('class', 'schematic-line' + (link.dashed ? ' dashed' : '') + (link.heavy ? ' heavy' : ''));
+            svg.appendChild(line);
+
+            // The label sits on the middle of the longest segment: above it
+            // when the segment runs across, over it when it runs down.
+            let best = 0;
+            let bestLen = -1;
+            for (let s = 0; s < n; s++) {
+                const len = Math.hypot(pts[s + 1][0] - pts[s][0], pts[s + 1][1] - pts[s][1]);
+                if (len > bestLen) { best = s; bestLen = len; }
+            }
+            const mx = (pts[best][0] + pts[best + 1][0]) / 2;
+            const my = (pts[best][1] + pts[best + 1][1]) / 2;
+            const across = Math.abs(pts[best + 1][0] - pts[best][0]) > Math.abs(pts[best + 1][1] - pts[best][1]);
+            labels[i].style.left = `${Math.round(mx)}px`;
+            labels[i].style.top = `${Math.round(across ? my - 24 : my)}px`;
+        });
+    }
+
+    // Lay out once the schematic is in the window, and again on every resize.
+    // A re-render replaces the schematic, so the old observer goes with it.
+    if (schematicObserver) schematicObserver.disconnect();
+    schematicObserver = window.ResizeObserver ? new ResizeObserver(layout) : null;
+    if (schematicObserver) schematicObserver.observe(root);
+    requestAnimationFrame(layout);
+    return root;
+}
+
+function hardwareDetail(part) {
+    return h('div', { class: 'machine-detail' }, part.lines.map(line => h('p', null, line)));
+}
+
 WM.register('mycomputer', {
     title: 'My Computer',
     icon: 'my-computer',
     className: 'folder-window',
-    width: 640,
-    height: 420,
+    width: 660,
+    height: 460,
     create(body, app) {
+        const selectedMachine = () => app.view && app.view.selected() && findMachine(app.view.selected().name);
         app.view = FolderView(body, app, {
             title: 'My Computer',
             icon: 'my-computer',
@@ -205,23 +346,27 @@ WM.register('mycomputer', {
                 const age = formatAge(MachineStatus.reportAge(snap));
                 return MachineStatus.isStale(snap) ? `No report since ${age}` : `Last report ${age}`;
             },
-            footer: () => h('p', { class: 'folder-side-note' }, 'Updated every 2 minutes.'),
+            footer: () => h('div', null,
+                h('p', { class: 'folder-side-note' }, 'Solid lines are cables. Dashed lines are connections over the network.'),
+                h('p', { class: 'folder-side-note' }, 'Status updated every 2 minutes.')),
             menus: folderMenus(app, () => [
                 {
                     label: 'Ping',
-                    disabled: () => !app.view || !app.view.selected(),
-                    action: () => launch('dos', { run: `ping ${app.view.selected().name}` }),
+                    disabled: () => !selectedMachine(),
+                    action: () => launch('dos', { run: `ping ${selectedMachine().id}` }),
                 },
                 {
                     label: 'Properties',
                     disabled: () => !app.view || !app.view.selected(),
-                    action: () => openMachineProperties(findMachine(app.view.selected().name)),
+                    action: () => app.view.selected().open(),
                 },
                 { separator: true },
             ]),
+            arrange: buildSchematic,
             items: () => {
                 const snap = MachineStatus.current();
-                return MACHINES.map(machine => ({
+                const machines = MACHINES.map(machine => ({
+                    node: MACHINE_NODE[machine.id],
                     name: machine.id,
                     icon: 'computer',
                     badge: MachineStatus.stateOf(machine.id, snap),
@@ -230,6 +375,16 @@ WM.register('mycomputer', {
                     detail: () => machineDetail(machine, MachineStatus.current()),
                     open: () => openMachineProperties(machine),
                 }));
+                const parts = HARDWARE.map(part => ({
+                    node: part.key,
+                    name: part.name,
+                    icon: part.icon,
+                    desc: part.desc,
+                    status: part.desc,
+                    detail: () => hardwareDetail(part),
+                    open: () => WM.messageBox({ title: part.name, icon: 'info', text: [`${part.desc}.`, ...part.lines] }),
+                }));
+                return machines.concat(parts);
             },
         });
         MachineStatus.onChange(() => {

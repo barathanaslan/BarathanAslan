@@ -1444,10 +1444,14 @@ function loadCV() {
 // Kick the fetch off immediately; the CV window opens at the end of the boot.
 const cvLoaded = loadCV();
 
-// The boot: a BIOS screen with a memory count, the splash screen, then the
-// desktop filling in piece by piece (wallpaper, taskbar, icons one at a time,
-// the CV). Any click or key press skips straight to the finished desktop.
-// With reduced motion the desktop appears at once.
+// Two boots. An ordinary visit goes straight to the desktop filling in:
+// wallpaper, taskbar, the icons one at a time, then the CV. A full boot (after
+// Restart or Shut down in the site, see bootAgain() in apps/system.js) first
+// shows a BIOS screen with a memory count and the splash screen. Any click or
+// key press skips to the finished desktop. With reduced motion the desktop
+// appears at once.
+const FULL_BOOT_KEY = 'b98.fullboot';
+
 const Boot = (() => {
     const overlay = document.getElementById('boot');
     const bios = overlay.querySelector('.boot-bios');
@@ -1458,6 +1462,18 @@ const Boot = (() => {
 
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const print = text => bios.appendChild(document.createTextNode(text));
+
+    // The flag is set just before a restart reloads the page and read once:
+    // a later visit or a manual reload is an ordinary one again.
+    function takeFullBootFlag() {
+        let full = false;
+        try {
+            full = !!sessionStorage.getItem(FULL_BOOT_KEY);
+            sessionStorage.removeItem(FULL_BOOT_KEY);
+        } catch (e) { /* no storage: ordinary boot */ }
+        document.documentElement.classList.remove('full-boot');
+        return full;
+    }
 
     function finish() {
         if (finished) return;
@@ -1472,17 +1488,10 @@ const Boot = (() => {
         cvLoaded.then(() => WM.open('cv'));
     }
 
-    function run() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            finish();
-            return;
-        }
-        window.addEventListener('keydown', finish, true);
-        window.addEventListener('pointerdown', finish, true);
-        desktop.classList.add('loading');
-        icons.forEach(icon => icon.classList.add('pending'));
-
-        // BIOS: version, memory test counting up, drives.
+    // BIOS: version, memory test counting up, drives; then the splash screen
+    // with the moving bar. Returns when the desktop starts to fill in.
+    function startup() {
+        document.documentElement.classList.add('full-boot');
         print('BIOS v4.10\nCopyright (C) 1998\n\nMemory Test: ');
         const memory = document.createTextNode('0K');
         bios.appendChild(memory);
@@ -1493,18 +1502,30 @@ const Boot = (() => {
         at(800, () => print('\n\nDetecting IDE drives...'));
         at(1100, () => print('\n  Primary Master: Hard Disk C:'));
         at(1450, () => print('\n\nStarting...'));
-
-        // Splash screen with the moving bar.
         at(1900, () => overlay.classList.add('splash'));
+        at(4000, () => overlay.classList.add('gone'));
+        return 4000;
+    }
+
+    function run() {
+        const full = takeFullBootFlag();
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            finish();
+            return;
+        }
+        window.addEventListener('keydown', finish, true);
+        window.addEventListener('pointerdown', finish, true);
+        desktop.classList.add('loading');
+        icons.forEach(icon => icon.classList.add('pending'));
+
+        const t = full ? startup() : 0;
 
         // Desktop: wallpaper first, then the taskbar, then the icons.
-        at(4000, () => {
-            overlay.classList.add('gone');
-            desktop.classList.add('ready');
-        });
-        at(4500, () => desktop.classList.add('taskbar-up'));
-        icons.forEach((icon, i) => at(4900 + i * 130, () => icon.classList.remove('pending')));
-        at(4900 + icons.length * 130 + 350, finish);
+        at(t, () => desktop.classList.add('ready'));
+        at(t + (full ? 500 : 250), () => desktop.classList.add('taskbar-up'));
+        const first = t + (full ? 900 : 500);
+        icons.forEach((icon, i) => at(first + i * 130, () => icon.classList.remove('pending')));
+        at(first + icons.length * 130 + 350, finish);
     }
 
     return { run, finish };
