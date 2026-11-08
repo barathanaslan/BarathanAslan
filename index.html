@@ -38,9 +38,16 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <meta name="theme-color" content="#008080">
 
-    <!-- Marks that JavaScript runs, so the boot screen shows from the first
-         frame. Without JavaScript the boot screen stays hidden. -->
-    <script>document.documentElement.classList.add('js');</script>
+    <!-- Marks that JavaScript runs. After a restart from Shut Down (which sets
+         b98.fullboot for this tab) it also marks a full boot, so the BIOS and
+         splash screens show from the first frame. An ordinary visit goes
+         straight to the desktop; without JavaScript the boot screen stays hidden. -->
+    <script>
+        document.documentElement.classList.add('js');
+        try {
+            if (sessionStorage.getItem('b98.fullboot')) document.documentElement.classList.add('full-boot');
+        } catch (e) { /* no storage: ordinary visit */ }
+    </script>
 
     <!-- 98.css for the retro UI -->
     <link rel="stylesheet" href="assets/98.css">

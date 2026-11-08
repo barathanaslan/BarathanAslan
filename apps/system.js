@@ -103,7 +103,7 @@ function FolderView(body, app, config) {
         const selectedName = selected && selected.name;
         grid.textContent = '';
         selected = null;
-        items.forEach(item => {
+        const itemElement = item => {
             const el = h('div', { class: 'folder-item', tabindex: '0', role: 'option', title: item.desc || item.name },
                 h('span', { class: 'icon-img' + (item.shortcut ? ' shortcut' : '') },
                     h('img', { src: iconSrc(item.icon, 32), alt: '', width: 32, height: 32 }),
@@ -113,18 +113,24 @@ function FolderView(body, app, config) {
                 selected = item;
                 describe(item);
             });
-            grid.appendChild(el);
             if (item.name === selectedName) {
                 el.classList.add('selected');
                 selected = item;
             }
-        });
+            return el;
+        };
+        // config.arrange(items, itemElement) may lay the items out itself
+        // (My Computer's schematic); otherwise they flow as a grid of icons.
+        const arranged = config.arrange ? config.arrange(items, itemElement) : null;
+        grid.classList.toggle('arranged', !!arranged);
+        if (arranged) grid.appendChild(arranged);
+        else items.forEach(item => grid.appendChild(itemElement(item)));
         statusCount.textContent = `${items.length} object(s)`;
         describe(selected);
     }
 
     grid.addEventListener('pointerdown', e => {
-        if (e.target === grid) {
+        if (!e.target.closest('.folder-item')) {
             grid.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
             selected = null;
             describe(null);
@@ -757,8 +763,10 @@ function powerScreen(className, content) {
     return screen;
 }
 
-// A restart is a page reload: the boot sequence in app.js does the rest.
+// A restart is a page reload that asks app.js for the full boot (BIOS and
+// splash screens), which an ordinary visit skips.
 function bootAgain() {
+    try { sessionStorage.setItem(FULL_BOOT_KEY, '1'); } catch (e) { /* plain reload */ }
     window.location.reload();
 }
 

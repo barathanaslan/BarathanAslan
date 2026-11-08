@@ -28,13 +28,14 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Boot (Boot in app.js). Shown only when JavaScript runs.
+   Boot (Boot in app.js). The BIOS and splash screens show only on a full
+   boot (after Restart or Shut down in the site), never on an ordinary visit.
    --------------------------------------------------------------------------- */
 .boot {
     display: none;
 }
 
-.js .boot {
+.js.full-boot .boot {
     display: block;
     position: fixed;
     inset: 0;

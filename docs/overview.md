@@ -66,17 +66,20 @@ optional `data-file`) or `data-href="<url>"`. No JS change is needed to add one.
 
 - No name or wordmark for the desktop itself: the boot splash, shut-down
   screens and Start banner use the Windows flag icon (`windows-32.png`).
-- `Boot` (end of `app.js`) runs on every page load: a BIOS screen with a
-  memory count, the splash screen with a moving bar, then the desktop filling
-  in (wallpaper, taskbar, icons one at a time, the CV window), about 6.5 s in
-  all. Any click or key press skips to the finished desktop; with reduced
-  motion it is skipped entirely. The `#boot` overlay is in `index.html` and
-  only shows when the inline script in `<head>` has added the `js` class, so
-  a browser without JavaScript never gets stuck behind it.
+- `Boot` (end of `app.js`) runs on every page load. An ordinary visit goes
+  straight to the desktop filling in (wallpaper, taskbar, icons one at a time,
+  the CV window), about 2 s. The full boot (a BIOS screen with a memory count,
+  then the splash screen with a moving bar, about 6.5 s) only follows a
+  restart from Shut Down: `bootAgain()` sets `sessionStorage['b98.fullboot']`
+  and reloads, and the inline script in `<head>` turns that flag into the
+  `full-boot` class so the `#boot` overlay shows from the first frame. `Boot`
+  clears the flag, so a manual reload is an ordinary visit again. Any click or
+  key press skips to the finished desktop; with reduced motion it is skipped
+  entirely. Without JavaScript the overlay never shows.
 - Shut Down → Stand by / Shut down show `bounceScreen()` (`apps/system.js`):
   the Windows flag icon drifts and shifts hue at each edge, DVD-player style. A
   click wakes from stand-by back to the same desktop; after Shut down it
-  reloads the page, which boots again. Restart reloads straight away.
+  runs the full boot. Restart runs the full boot straight away.
 
 ### Small screens and touch
 
@@ -128,6 +131,14 @@ and friends.
 - Clippy's Start → Help tips: `HELP_TIPS` in `app.js`.
 - Machines in My Computer: `MACHINES` in `apps/network.js`, and `HOSTS` in
   both `status/worker/src/index.js` and `status/reporter/report.py`.
+- My Computer is a schematic of how the machines connect (`buildSchematic()`
+  in `apps/network.js`): `HARDWARE` holds the parts that are not computers (the
+  WD Elements disk, the TX401 card), `SCHEMATIC` the node positions and the
+  links, as fractions of the view, in a `wide` and a `tall` (narrow window,
+  phone) layout. Solid lines are cables, dashed lines are connections over the
+  network. A new machine needs a node there too (`MACHINE_NODE`). Other
+  folders opt into a custom layout the same way, through `arrange` in
+  `FolderView`.
 
 ## Machine status (`status/`)
 
