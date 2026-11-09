@@ -364,8 +364,10 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   }
   // now and then a star catches the eye: a long cross of light that opens and closes
   let glints = [], nextGlint = 0;
+  // while the camera pulls back from the world into the sky, the stars rush in toward it
+  let skyZoom = null;
   function drawGlints(list, a, t, reveal) {
-    if (reduce || a <= 0) return;
+    if (reduce || a <= 0 || skyZoom) return;
     const shown = Math.floor(clamp(reveal) * list.length);
     if (t > nextGlint && shown > 0) {
       const s = list[Math.floor(Math.random() * Math.min(shown, list.length))];
@@ -403,6 +405,7 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
       if (vis <= 0) break;
       let px = s.px, py = s.py;
       if (skyRot) { const dx = px - pole[0], dy = py - pole[1], c = Math.cos(skyRot), sn = Math.sin(skyRot); px = pole[0] + dx * c - dy * sn; py = pole[1] + dx * sn + dy * c; }
+      if (skyZoom) { px = skyZoom.x + (px - skyZoom.x) * skyZoom.k; py = skyZoom.y + (py - skyZoom.y) * skyZoom.k; }
       if (px < -10 || py < -10 || px > W + 10 || py > H + 10) continue;
       let al = clamp(0.45 + (5.4 - s.m) * 0.16, 0.4, 1) * a * vis;
       if (s.col) al = Math.max(al, 0.7 * a * vis);
@@ -800,10 +803,14 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     } else if (name === "cat") {
       // the world shrinks to a single star in the sky over the park, then the view sinks to the clouds
       const P = panDepth();
-      const pan = P * ease(ramp(s, 2.4, 5.0));
-      drawSky(now, a * ease(ramp(s, 0.5, 1.9)), cityStars, 0, 1, null, pan);
-      drawPhotos(a * ease(ramp(s, 3.6, 5.2)), pan, now);
-      const T = shrinkTarget(), e = ease(ramp(s, 0, 2.0));
+      const pan = P * ease(ramp(s, 2.9, 5.4));
+      const T = shrinkTarget(), e = ease(ramp(s, 0, 2.6));
+      // the camera flies back: the stars start spread wide around the world and close in as it shrinks
+      const zk = reduce ? 1 : Math.exp(lerp(Math.log(7), 0, ease(ramp(s, 0, 2.7))));
+      skyZoom = zk > 1.001 ? { x: T[0], y: T[1], k: zk } : null;
+      drawSky(now, a * ease(ramp(s, 0.05, 1.1)), cityStars, 0, 1, null, pan);
+      skyZoom = null;
+      drawPhotos(a * ease(ramp(s, 3.9, 5.6)), pan, now);
       if (e < 1) {
         const R = globeProj.scale(), [gx, gy] = globeProj.translate();
         const sg = Math.exp(lerp(0, Math.log(3 / R), e));
@@ -814,7 +821,23 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
         ctx.drawImage(globeImg, 0, 0, W, H);
         ctx.restore();
       }
-      if (e > 0.6) { ctx.save(); ctx.translate(0, -pan); starMark(T[0], T[1] + 0, a * ramp(e, 0.6, 1) * (1 - ramp(s, 2.6, 3.4)), 1.3); ctx.restore(); }
+      if (e > 0.6) {
+        ctx.save(); ctx.translate(0, -pan);
+        const fade = 1 - ramp(s, 3.2, 4.2);
+        starMark(T[0], T[1], a * ramp(e, 0.6, 1) * fade, 1.3);
+        // the moment the world becomes a star: a soft flash and a ring of light
+        const f = ramp(s, 2.3, 3.6);
+        if (f > 0 && f < 1) {
+          const R = Math.min(W, H) * (0.05 + 0.22 * f), gl = ctx.createRadialGradient(T[0], T[1], 0, T[0], T[1], R);
+          gl.addColorStop(0, rgba([255, 250, 235], a * 0.85 * (1 - f)));
+          gl.addColorStop(0.25, rgba(C.ink, a * 0.35 * (1 - f)));
+          gl.addColorStop(1, rgba(C.ink, 0));
+          ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(T[0], T[1], R, 0, TAU); ctx.fill();
+          ctx.strokeStyle = rgba(C.ink, a * 0.5 * (1 - f)); ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(T[0], T[1], R * 0.8, 0, TAU); ctx.stroke();
+        }
+        ctx.restore();
+      }
     } else if (name === "end") {
       // back up out of the clouds, and the sky fills with the stars she added
       const pan = panDepth() * (1 - ease(ramp(s, 0, 2.2)));
@@ -1062,9 +1085,9 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   // in the corner and tapping it starts the player directly.
   // a piano version first; ?v=<id> tries another one
   const qs = new URLSearchParams(location.search);
-  const YT_IDS = [qs.get("v"), "_3EgHACPXeo", "78EeFSDYxOs", "FaSeL5hRr_I"].filter(Boolean);
+  const YT_IDS = [qs.get("v"), "FaSeL5hRr_I", "_3EgHACPXeo", "78EeFSDYxOs"].filter(Boolean);
   // the stretch that loops, in seconds (end 0 = to the end of the track); ?bas=40&son=100 overrides, for trying
-  const LOOP = { start: +qs.get("bas") || 0, end: +qs.get("son") || 0 };
+  const LOOP = { start: qs.has("bas") ? +qs.get("bas") : 24, end: +qs.get("son") || 0 };
   const SHOW_TIME = true;
   const ytBox = $("#yt");
   let yt = null, ytReady = false, ytIdx = 0, ytWanted = false, ytState = -1, ytFailed = false, ytAskTimer = 0;
@@ -1075,8 +1098,8 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     ytBox.classList.remove("ask");
     if (ytWanted) startSynth();
   }
-  const VOL = 45, FADE = 2.5;
-  let ytVol = VOL, ytFading = false;
+  const VOL = 25, FADE = 2.5, FADE_IN = 5;
+  let ytVol = 0, ytFading = false;
   // fade out before the loop's end, jump back to its start, fade in again; and the time readout
   setInterval(() => {
     if (!yt || !ytReady || ytFailed) return;
@@ -1086,19 +1109,20 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
       $("#ytTime").textContent = `${f(t)} / ${f(d)}` + (LOOP.end ? `  (döngü ${f(LOOP.start)}–${f(LOOP.end)})` : "");
     }
     if (!ytGoing()) return;
-    if (LOOP.end && t >= LOOP.end - FADE && !ytFading) ytFading = true;
+    const end = LOOP.end || (d > LOOP.start + 10 ? d - 0.8 : 0);
+    if (end && t >= end - FADE && !ytFading) ytFading = true;
     if (ytFading) {
       ytVol = Math.max(0, ytVol - VOL / (FADE * 5));
       yt.setVolume(ytVol);
       if (ytVol <= 0) { yt.seekTo(LOOP.start, true); ytFading = false; }
-    } else if (ytVol < VOL) { ytVol = Math.min(VOL, ytVol + VOL / (FADE * 5)); yt.setVolume(ytVol); }
+    } else if (ytVol < VOL) { ytVol = Math.min(VOL, ytVol + VOL / (FADE_IN * 5)); yt.setVolume(ytVol); }
   }, 200);
   function ytArmAsk() {
     clearTimeout(ytAskTimer);
     ytAskTimer = setTimeout(() => {
       if (ytFailed || (ytGoing() && !yt.isMuted())) return;
       // the phone kept it silent: stop, take the mute off, and let a tap on the ♪ (the player itself) start it
-      yt.pauseVideo(); yt.unMute(); yt.setVolume(ytVol);
+      ytVol = 0; yt.pauseVideo(); yt.unMute(); yt.setVolume(0);
       ytBox.classList.add("ask");
     }, 2500);
   }
@@ -1124,7 +1148,7 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
         onStateChange: (e) => {
           ytState = e.data;
           if (ytGoing()) ytBox.classList.remove("ask");
-          if (e.data === 0) { yt.seekTo(LOOP.start, true); yt.playVideo(); }
+          if (e.data === 0) { ytVol = 0; yt.setVolume(0); yt.seekTo(LOOP.start, true); yt.playVideo(); }
         },
         onError: () => {
           if (++ytIdx >= YT_IDS.length) return ytGiveUp();
@@ -1145,7 +1169,7 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     if (!ytWanted) { ytWanted = true; setTimeout(() => { if (!ytReady) ytGiveUp(); }, 12000); }
     if (!ytReady) return;
     if (!ytGoing()) ytPlay();
-    else if (yt.isMuted()) { yt.unMute(); yt.setVolume(ytVol); ytArmAsk(); }
+    else if (yt.isMuted()) { ytVol = 0; yt.setVolume(0); yt.unMute(); ytArmAsk(); }
   }
   document.addEventListener("visibilitychange", () => {
     if (!ytReady || ytFailed) return;
