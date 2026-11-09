@@ -52,6 +52,7 @@ body {
   opacity: 0; transition: opacity 1.4s ease;
 }
 .poem p.on { opacity: 1; }
+.poem p + p { margin-top: .5em; }
 .poem p.last { font-weight: 700; font-size: clamp(26px, 7.4vw, 44px); margin-top: .45em; }
 .poem.out p { opacity: 0; transition: opacity .4s ease; }
 .next {
@@ -729,10 +730,10 @@ const DATA = {"sky":{"stars":[[0.8518,-0.2533,-0.05,1.79,1.24],[0.228,-0.0467,0.
   // =====================================================================  the steps
   const KM = fmt(D.totalKm);
   const STEPS = [
-    { scene: "sky", dur: 6.5, lines: [["Bazı geceler diğerlerinden daha karanlık.", 4.4]] },
-    { scene: "map", dur: 9.6, lines: [[`${KM} kilometre.`, 8.3]] },
-    { scene: "globe", dur: 8.2, lines: [[`${KM} kilometre.`, 0, "", "top"], ["Dünyanın çevresini dolaşmaya yeter.", 4.5, "", "top"], ["Dönüp dolaşıp yine seni bulacaksam,", 5.6], ["bu mesafe katetmeye değer.", 6.7]] },
-    { scene: "end", dur: 7.8, lines: [["Gökyüzüme yeni yıldızlar kattığın için teşekkür ederim.", 4.4], ["İyi ki doğdun.", 6.4, "last"]], dur2: 7.8 },
+    { scene: "sky", dur: 6.5, lines: [["Bazı geceler diğerlerinden daha karanlık", 4.4]] },
+    { scene: "map", dur: 9.6, lines: [[`${KM} kilometre`, 8.3]] },
+    { scene: "globe", dur: 7.4, lines: [[`${KM} kilometre`, 0, "", "top"], ["Dünyanın çevresini dolaşmaya yeter", 4.5, "", "top"], ["Dönüp dolaşıp yine seni bulacaksam", 5.6]] },
+    { scene: "end", dur: 9.0, lines: [["Gökyüzüme yeni yıldızlar kattığın için teşekkür ederim", 4.4], ["Beraber yıldızları seyredeceğimiz nice yıllara", 6.0], ["İyi ki doğdun Betülcanım", 7.6, "last"]] },
   ];
   const XF = 1.2; // crossfade between scenes, seconds
 
