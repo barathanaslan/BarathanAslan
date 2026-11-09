@@ -68,7 +68,19 @@ body {
   .poem-top { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 7vh); }
 .poem p { margin: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .grain, .next.on { animation: none; } }
+/* the music player: invisible; only if the phone won't start it, a small ♪ shows and a tap on it starts the player itself */
+.yt {
+  position: fixed; width: 46px; height: 46px; overflow: hidden; border-radius: 50%;
+  right: max(16px, calc(env(safe-area-inset-right, 0px) + 12px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  opacity: 0; pointer-events: none; transition: opacity 1s ease;
+  border: 1px solid var(--ink); background: var(--night2);
+}
+.yt span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; color: var(--ink); }
+.yt iframe { position: absolute; left: -77px; top: -77px; width: 200px; height: 200px; border: 0; opacity: .01; }
+.yt.ask { opacity: .85; pointer-events: auto; animation: ask 2.4s ease-in-out infinite; }
+@keyframes ask { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .grain, .next.on, .yt.ask { animation: none; } }
 noscript { position: fixed; inset: 40% 16px auto; color: var(--ink); text-align: center; }
 </style>
 
@@ -79,6 +91,8 @@ noscript { position: fixed; inset: 40% 16px auto; color: var(--ink); text-align:
 <div class="poem poem-top" id="poemTop" lang="tr" aria-live="polite"></div>
 <div class="poem" id="poem" lang="tr" aria-live="polite"></div>
 <div class="next" id="next" aria-hidden="true"></div>
+<div id="ytTime" style="position:fixed;top:8px;left:8px;font:12px monospace;color:#efe3c4;opacity:.8;pointer-events:none;z-index:9"></div>
+<div class="yt" id="yt" aria-label="Müzik"><span>♪</span><div id="ytPlayer"></div></div>
 <noscript>Bu sayfa JavaScript ile çalışır.</noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
@@ -973,9 +987,9 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   }
 
   // =====================================================================  music
-  // a music box over a soft pad, D major, played live; it starts on the first touch
+  // fallback only: a music box over a soft pad, D major, played live, if the recording can't load
   let audio = null;
-  function startMusic() {
+  function startSynth() {
     if (audio) { if (audio.ac.state === "suspended") audio.ac.resume(); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
@@ -1043,6 +1057,101 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     audio = { ac, timer };
   }
 
+  // Romantic Flight (John Powell), the official recording through YouTube's own player, looped.
+  // It starts on the first touch; if the phone refuses to start it that way, a small ♪ appears
+  // in the corner and tapping it starts the player directly.
+  // a piano version first; ?v=<id> tries another one
+  const qs = new URLSearchParams(location.search);
+  const YT_IDS = [qs.get("v"), "_3EgHACPXeo", "78EeFSDYxOs", "FaSeL5hRr_I"].filter(Boolean);
+  // the stretch that loops, in seconds (end 0 = to the end of the track); ?bas=40&son=100 overrides, for trying
+  const LOOP = { start: +qs.get("bas") || 0, end: +qs.get("son") || 0 };
+  const SHOW_TIME = false;
+  const ytBox = $("#yt");
+  let yt = null, ytReady = false, ytIdx = 0, ytWanted = false, ytState = -1, ytFailed = false, ytAskTimer = 0;
+  const ytGoing = () => ytState === 1 || ytState === 3;
+  function ytGiveUp() {
+    if (ytFailed) return;
+    ytFailed = true;
+    ytBox.classList.remove("ask");
+    if (ytWanted) startSynth();
+  }
+  const VOL = 45, FADE = 2.5;
+  let ytVol = VOL, ytFading = false;
+  // fade out before the loop's end, jump back to its start, fade in again; and the time readout
+  setInterval(() => {
+    if (!yt || !ytReady || ytFailed) return;
+    const t = yt.getCurrentTime ? yt.getCurrentTime() : 0, d = yt.getDuration ? yt.getDuration() : 0;
+    if (SHOW_TIME) {
+      const f = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+      $("#ytTime").textContent = `${f(t)} / ${f(d)}` + (LOOP.end ? `  (döngü ${f(LOOP.start)}–${f(LOOP.end)})` : "");
+    }
+    if (!ytGoing()) return;
+    if (LOOP.end && t >= LOOP.end - FADE && !ytFading) ytFading = true;
+    if (ytFading) {
+      ytVol = Math.max(0, ytVol - VOL / (FADE * 5));
+      yt.setVolume(ytVol);
+      if (ytVol <= 0) { yt.seekTo(LOOP.start, true); ytFading = false; }
+    } else if (ytVol < VOL) { ytVol = Math.min(VOL, ytVol + VOL / (FADE * 5)); yt.setVolume(ytVol); }
+  }, 200);
+  function ytArmAsk() {
+    clearTimeout(ytAskTimer);
+    ytAskTimer = setTimeout(() => {
+      if (ytFailed || (ytGoing() && !yt.isMuted())) return;
+      // the phone kept it silent: stop, take the mute off, and let a tap on the ♪ (the player itself) start it
+      yt.pauseVideo(); yt.unMute(); yt.setVolume(ytVol);
+      ytBox.classList.add("ask");
+    }, 2500);
+  }
+  function ytPlay() {
+    yt.unMute(); yt.setVolume(ytVol); yt.playVideo();
+    ytArmAsk();
+  }
+  // on arrival: try to play with sound right away; where the browser only allows silent autoplay,
+  // the song starts muted so it is already under way, and the first touch turns the sound on
+  function ytAutostart() {
+    yt.setVolume(ytVol); yt.playVideo();
+    setTimeout(() => {
+      if (ytWanted || ytFailed) return;
+      if (!ytGoing()) { yt.mute(); yt.playVideo(); }
+    }, 1200);
+  }
+  window.onYouTubeIframeAPIReady = () => {
+    yt = new YT.Player("ytPlayer", {
+      width: 200, height: 200, videoId: YT_IDS[0],
+      playerVars: { playsinline: 1, controls: 0, disablekb: 1, rel: 0, fs: 0, iv_load_policy: 3 },
+      events: {
+        onReady: () => { ytReady = true; if (LOOP.start) yt.seekTo(LOOP.start, true); if (ytWanted) ytPlay(); else ytAutostart(); },
+        onStateChange: (e) => {
+          ytState = e.data;
+          if (ytGoing()) ytBox.classList.remove("ask");
+          if (e.data === 0) { yt.seekTo(LOOP.start, true); yt.playVideo(); }
+        },
+        onError: () => {
+          if (++ytIdx >= YT_IDS.length) return ytGiveUp();
+          yt.loadVideoById({ videoId: YT_IDS[ytIdx], startSeconds: LOOP.start });
+        },
+      },
+    });
+  };
+  {
+    const s = document.createElement("script");
+    s.src = "https://www.youtube.com/iframe_api";
+    s.onerror = ytGiveUp;
+    document.head.append(s);
+  }
+  // if the player hasn't come up 12 s after the first touch, play the fallback instead of silence
+  function startMusic() {
+    if (ytFailed) return startSynth();
+    if (!ytWanted) { ytWanted = true; setTimeout(() => { if (!ytReady) ytGiveUp(); }, 12000); }
+    if (!ytReady) return;
+    if (!ytGoing()) ytPlay();
+    else if (yt.isMuted()) { yt.unMute(); yt.setVolume(ytVol); ytArmAsk(); }
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!ytReady || ytFailed) return;
+    if (document.hidden) yt.pauseVideo(); else yt.playVideo();
+  });
+
   // one gesture, one step
   let lock = 0;
   function advance(dir) {
@@ -1059,7 +1168,8 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     if (Math.abs(e.deltaY) > 6) advance(e.deltaY > 0 ? 1 : -1);
   }, { passive: false });
   let touch = null;
-  window.addEventListener("touchstart", (e) => { const p = e.changedTouches[0]; touch = { x: p.clientX, y: p.clientY }; }, { passive: true });
+  window.addEventListener("touchstart", (e) => { startMusic(); const p = e.changedTouches[0]; touch = { x: p.clientX, y: p.clientY }; }, { passive: true });
+  window.addEventListener("pointerdown", () => startMusic());
   window.addEventListener("touchend", (e) => {
     if (!touch) return;
     startMusic();
