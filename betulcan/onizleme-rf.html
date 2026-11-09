@@ -91,6 +91,7 @@ noscript { position: fixed; inset: 40% 16px auto; color: var(--ink); text-align:
 <div class="poem poem-top" id="poemTop" lang="tr" aria-live="polite"></div>
 <div class="poem" id="poem" lang="tr" aria-live="polite"></div>
 <div class="next" id="next" aria-hidden="true"></div>
+<div id="ytTime" style="position:fixed;top:8px;left:8px;font:12px monospace;color:#efe3c4;opacity:.8;pointer-events:none;z-index:9"></div>
 <div class="yt" id="yt" aria-label="Müzik"><span>♪</span><div id="ytPlayer"></div></div>
 <noscript>Bu sayfa JavaScript ile çalışır.</noscript>
 
@@ -1060,6 +1061,10 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   // It starts on the first touch; if the phone refuses to start it that way, a small ♪ appears
   // in the corner and tapping it starts the player directly.
   const YT_IDS = ["ZJR8tuO-mIU", "YiNJI5ZLjxU", "yp__xOfWjjE"];
+  // the stretch that loops, in seconds (end 0 = to the end of the track); ?bas=40&son=100 overrides, for trying
+  const qs = new URLSearchParams(location.search);
+  const LOOP = { start: +qs.get("bas") || 0, end: +qs.get("son") || 0 };
+  const SHOW_TIME = true;
   const ytBox = $("#yt");
   let yt = null, ytReady = false, ytIdx = 0, ytWanted = false, ytState = -1, ytFailed = false, ytAskTimer = 0;
   const ytGoing = () => ytState === 1 || ytState === 3;
@@ -1069,8 +1074,26 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     ytBox.classList.remove("ask");
     if (ytWanted) startSynth();
   }
+  const VOL = 80, FADE = 2.5;
+  let ytVol = VOL, ytFading = false;
+  // fade out before the loop's end, jump back to its start, fade in again; and the time readout
+  setInterval(() => {
+    if (!yt || !ytReady || ytFailed) return;
+    const t = yt.getCurrentTime ? yt.getCurrentTime() : 0, d = yt.getDuration ? yt.getDuration() : 0;
+    if (SHOW_TIME) {
+      const f = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+      $("#ytTime").textContent = `${f(t)} / ${f(d)}` + (LOOP.end ? `  (döngü ${f(LOOP.start)}–${f(LOOP.end)})` : "");
+    }
+    if (!ytGoing()) return;
+    if (LOOP.end && t >= LOOP.end - FADE && !ytFading) ytFading = true;
+    if (ytFading) {
+      ytVol = Math.max(0, ytVol - VOL / (FADE * 5));
+      yt.setVolume(ytVol);
+      if (ytVol <= 0) { yt.seekTo(LOOP.start, true); ytFading = false; }
+    } else if (ytVol < VOL) { ytVol = Math.min(VOL, ytVol + VOL / (FADE * 5)); yt.setVolume(ytVol); }
+  }, 200);
   function ytPlay() {
-    yt.unMute(); yt.setVolume(80); yt.playVideo();
+    yt.unMute(); yt.setVolume(ytVol); yt.playVideo();
     clearTimeout(ytAskTimer);
     ytAskTimer = setTimeout(() => { if (!ytGoing() && !ytFailed) ytBox.classList.add("ask"); }, 2500);
   }
@@ -1079,11 +1102,11 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
       width: 200, height: 200, videoId: YT_IDS[0],
       playerVars: { playsinline: 1, controls: 0, disablekb: 1, rel: 0, fs: 0, iv_load_policy: 3 },
       events: {
-        onReady: () => { ytReady = true; if (ytWanted) ytPlay(); },
+        onReady: () => { ytReady = true; if (LOOP.start) yt.cueVideoById({ videoId: YT_IDS[ytIdx], startSeconds: LOOP.start }); if (ytWanted) ytPlay(); },
         onStateChange: (e) => {
           ytState = e.data;
           if (ytGoing()) ytBox.classList.remove("ask");
-          if (e.data === 0) { yt.seekTo(0, true); yt.playVideo(); }
+          if (e.data === 0) { yt.seekTo(LOOP.start, true); yt.playVideo(); }
         },
         onError: () => {
           if (++ytIdx >= YT_IDS.length) return ytGiveUp();
