@@ -1060,9 +1060,10 @@ const PHOTOS = {"kedi-1": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   // Romantic Flight (John Powell), the official recording through YouTube's own player, looped.
   // It starts on the first touch; if the phone refuses to start it that way, a small ♪ appears
   // in the corner and tapping it starts the player directly.
-  const YT_IDS = ["ZJR8tuO-mIU", "YiNJI5ZLjxU", "yp__xOfWjjE"];
-  // the stretch that loops, in seconds (end 0 = to the end of the track); ?bas=40&son=100 overrides, for trying
+  // a piano version first; ?v=<id> tries another one
   const qs = new URLSearchParams(location.search);
+  const YT_IDS = [qs.get("v"), "78EeFSDYxOs", "_3EgHACPXeo", "FaSeL5hRr_I"].filter(Boolean);
+  // the stretch that loops, in seconds (end 0 = to the end of the track); ?bas=40&son=100 overrides, for trying
   const LOOP = { start: +qs.get("bas") || 0, end: +qs.get("son") || 0 };
   const SHOW_TIME = true;
   const ytBox = $("#yt");
